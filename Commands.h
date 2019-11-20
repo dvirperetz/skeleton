@@ -6,11 +6,14 @@
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
 #define HISTORY_MAX_RECORDS (50)
+#define MAXPATHLEN (4096)
 
 class Command {
 // TODO: Add your data members
- public:
-  Command(const char* cmd_line);
+protected:
+    const char* cmd;
+public:
+  explicit Command(const char* cmd_line) : cmd(cmd_line) {};
   virtual ~Command();
   virtual void execute() = 0;
   //virtual void prepare();
@@ -50,7 +53,9 @@ class RedirectionCommand : public Command {
 };
 
 class ChangeDirCommand : public BuiltInCommand {
-// TODO: Add your data members public:
+// TODO: Add your data members
+
+public:
   ChangeDirCommand(const char* cmd_line, char** plastPwd);
   virtual ~ChangeDirCommand() {}
   void execute() override;

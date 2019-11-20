@@ -141,6 +141,9 @@ void JobsList::addJob(Command* cmd, bool isStopped){
      this->job_list.push_back(new_job);
 }
 
+/**
+ * great success
+ */
 void JobsList::printJobsList(){
     for(std::vector<JobEntry*>::iterator it = this->job_list.begin();
         it != this->job_list.end(); ++it) {

@@ -9,6 +9,7 @@
 #define MAXPATHLEN (4096)
 #define MAX_HISTORY_SIZE (50)
 
+
 class Command {
 // TODO: Add your data members
 protected:
@@ -18,6 +19,7 @@ public:
   explicit Command(const char* cmd_line) : cmd(cmd_line) {};
   virtual ~Command();
   virtual void execute() = 0;
+  const char* getCmd(){return cmd;};
   //virtual void prepare();
   //virtual void cleanup();
   // TODO: Add your extra methods if needed
@@ -123,10 +125,29 @@ class JobsList {
  public:
   class JobEntry {
    // TODO: Add your data members
+   const char* cmd_text;
+   bool isStopped;
+   unsigned long created_time;
+   pid_t pid;
+   unsigned int job_id;
+  public:
+   JobEntry(const char* cmd_text) :
+            cmd_text(cmd_text), isStopped(false) {
+       pid = getpid();
+       created_time= time(nullptr);
+   }
+   void setJobID(unsigned int job_id){this->job_id=job_id;};
+   unsigned int getJobID(){return this->job_id;};
+   pid_t getPID(){return this->pid;};
+   const char* getCMD(){return cmd_text;};
+   unsigned long getCreatedTime(){return created_time;};
+   bool getIsStopped(){return isStopped;};
   };
+  std::vector<JobEntry*> job_list;
  // TODO: Add your data members
+    unsigned int job_counter;
  public:
-  JobsList();
+  JobsList(){job_counter = 0;};
   ~JobsList();
   void addJob(Command* cmd, bool isStopped = false);
   void printJobsList();
@@ -138,13 +159,16 @@ class JobsList {
   JobEntry *getLastStoppedJob(int *jobId);
   // TODO: Add extra methods or modify exisitng ones as needed
 };
-
 class JobsCommand : public BuiltInCommand {
  // TODO: Add your data members
+    const char* cmd_line;
+    JobsList* jobs;
  public:
-  JobsCommand(const char* cmd_line, JobsList* jobs);
-  virtual ~JobsCommand() {}
-  void execute() override;
+    JobsCommand(const char* cmd_line, JobsList* jobs) :
+        BuiltInCommand(cmd_line),
+        jobs(jobs){};
+    virtual ~JobsCommand() {}
+    void execute() override;
 };
 
 class KillCommand : public BuiltInCommand {
@@ -199,3 +223,5 @@ class SmallShell {
 };
 
 #endif //SMASH_COMMAND_H_
+
+

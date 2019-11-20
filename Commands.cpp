@@ -131,6 +131,42 @@ void HistoryCommand::execute() {
     this->history->printHistory();
 }
 
+void JobsCommand::execute() {
+    this->jobs->printJobsList();
+}
+
+void JobsList::addJob(Command* cmd, bool isStopped){
+    JobEntry* new_job = new JobEntry(cmd->getCmd());
+    new_job->setJobID(++job_counter);
+     this->job_list.push_back(new_job);
+}
+
+void JobsList::printJobsList(){
+    for(std::vector<JobEntry*>::iterator it = this->job_list.begin();
+        it != this->job_list.end(); ++it) {
+        if(!(*it)->getIsStopped()){
+            cout << (*it)->getJobID() << " " << (*it)->getCMD() << " : " <<
+                 (*it)->getPID() << " " <<
+                 (difftime(time(nullptr), (*it)->getCreatedTime() )) <<
+                 " secs" << endl;
+        }else{
+            cout << (*it)->getJobID() << " " << (*it)->getCMD() << " : " <<
+                 (*it)->getPID() << " " <<
+                 (difftime(time(nullptr), (*it)->getCreatedTime() )) <<
+                 " secs (stopped)" << endl;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
 SmallShell::SmallShell() {
 // TODO: add your implementation
 }

@@ -7,11 +7,13 @@
 #define COMMAND_MAX_ARGS (20)
 #define HISTORY_MAX_RECORDS (50)
 #define MAXPATHLEN (4096)
+#define MAX_HISTORY_SIZE (50)
 
 class Command {
 // TODO: Add your data members
 protected:
     const char* cmd;
+    char* args[COMMAND_MAX_ARGS];
 public:
   explicit Command(const char* cmd_line) : cmd(cmd_line) {};
   virtual ~Command();
@@ -54,7 +56,7 @@ class RedirectionCommand : public Command {
 
 class ChangeDirCommand : public BuiltInCommand {
 // TODO: Add your data members
-
+    const char** plastPwd;
 public:
   ChangeDirCommand(const char* cmd_line, char** plastPwd);
   virtual ~ChangeDirCommand() {}
@@ -85,23 +87,36 @@ class QuitCommand : public BuiltInCommand {
 
 class CommandsHistory {
  protected:
-  class CommandHistoryEntry {
-	  // TODO: Add your data members
-  };
- // TODO: Add your data members
+      class CommandHistoryEntry {
+          // TODO: Add your data members
+          const char* cmd_text;
+          const unsigned int timestamp;
+      public:
+          CommandHistoryEntry(const char* cmd_txt) : cmd_text(cmd_txt), timestamp(cmd_count++) {};
+          ~CommandHistoryEntry(){}
+          const char* getCmdText(){return cmd_text;}
+          unsigned int getTimeStamp(){return timestamp;}
+
+      };
+        // TODO: Add your data members
+      static unsigned int cmd_count;
+      CommandHistoryEntry* history_list[MAX_HISTORY_SIZE];
+
  public:
-  CommandsHistory();
-  ~CommandsHistory() {}
-  void addRecord(const char* cmd_line);
-  void printHistory();
+      CommandsHistory() {cmd_count = 1;};
+      ~CommandsHistory() {}
+      void addRecord(const char* cmd_line);
+      void printHistory();
 };
 
 class HistoryCommand : public BuiltInCommand {
  // TODO: Add your data members
+    CommandsHistory* history;
  public:
-  HistoryCommand(const char* cmd_line, CommandsHistory* history);
-  virtual ~HistoryCommand() {}
-  void execute() override;
+      HistoryCommand(const char* cmd_line, CommandsHistory* history)
+      : BuiltInCommand(cmd_line), history(history){};
+      virtual ~HistoryCommand() {}
+      void execute() override;
 };
 
 class JobsList {

@@ -58,9 +58,10 @@ class RedirectionCommand : public Command {
 
 class ChangeDirCommand : public BuiltInCommand {
 // TODO: Add your data members
-    const char** plastPwd;
+    char** plastPwd;
 public:
-  ChangeDirCommand(const char* cmd_line, char** plastPwd);
+  ChangeDirCommand(const char* cmd_line, char** plastPwd) :
+                    BuiltInCommand(cmd_line), plastPwd(plastPwd) {};
   virtual ~ChangeDirCommand() {}
   void execute() override;
 };
@@ -173,8 +174,10 @@ class JobsCommand : public BuiltInCommand {
 
 class KillCommand : public BuiltInCommand {
  // TODO: Add your data members
+ JobsList* jobs;
  public:
-  KillCommand(const char* cmd_line, JobsList* jobs);
+  KillCommand(const char* cmd_line, JobsList* jobs) :
+    BuiltInCommand(cmd_line), jobs(jobs) {};
   virtual ~KillCommand() {}
   void execute() override;
 };

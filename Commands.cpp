@@ -141,9 +141,7 @@ void JobsList::addJob(Command* cmd, bool isStopped){
      this->job_list.push_back(new_job);
 }
 
-/**
- * great success
- */
+
 void JobsList::printJobsList(){
     for(std::vector<JobEntry*>::iterator it = this->job_list.begin();
         it != this->job_list.end(); ++it) {
@@ -161,6 +159,14 @@ void JobsList::printJobsList(){
     }
 }
 
+void KillCommand::execute() {
+    if()
+    if(jobs->getJobById(*(this->args[2])) == nullptr){
+        cout << "smash error: kill: job-id " << this->args[2]
+        << " does not exist" << endl;
+    }
+
+}
 
 
 
@@ -178,9 +184,7 @@ SmallShell::~SmallShell() {
 // TODO: add your implementation
 }
 
-/**
-* Creates and returns a pointer to Command class which matches the given command line (cmd_line)
-*/
+
 Command * SmallShell::CreateCommand(const char* cmd_line) {
     // For example:
 /*
@@ -205,4 +209,3 @@ void SmallShell::executeCommand(const char *cmd_line) {
     // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
-//HI

@@ -160,12 +160,27 @@ void JobsList::printJobsList(){
 }
 
 void KillCommand::execute() {
-    if()
-    if(jobs->getJobById(*(this->args[2])) == nullptr){
+    //  make sure the kill command comes with exactly 2 arguments, no less
+    //  and no more.
+    if(this->args[1] == nullptr || this->args[2] == nullptr ||
+        this->args[3] != nullptr){
+        cout << "smash error: kill: invalid arguments" << endl;
+    }
+    //if the job-id doesn't exist
+    else if(jobs->getJobById(*(this->args[2])) == nullptr){
         cout << "smash error: kill: job-id " << this->args[2]
         << " does not exist" << endl;
+    } else{
+        int signal = abs(strtol(this->args[1], nullptr,0));
+        pid_t pid = jobs->getJobById(*(this->args[2]))->getPID();
+        if(kill(,
+                signal) == -1 ){
+            perror("smash error: kill failed");
+        } else{
+            cout << "signal number " << signal << " was sent to pid " <<
+            pid << endl;
+        }
     }
-
 }
 
 

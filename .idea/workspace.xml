@@ -13,7 +13,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5399f80c-240c-49e2-9c5e-90d1f0aebd82" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Commands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Commands.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,30 +45,29 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Commands.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="177" column="20" selection-start-line="177" selection-start-column="20" selection-end-line="177" selection-end-column="20" />
+            <state relative-caret-position="123">
+              <caret line="222" column="32" selection-start-line="222" selection-start-column="32" selection-end-line="222" selection-end-column="32" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
                 <element signature="e#189#336#0" expanded="true" />
                 <element signature="e#1738#1899#0" />
                 <element signature="e#2944#2989#0" />
                 <element signature="e#3711#3747#0" />
-                <element signature="e#3926#3964#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Commands.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1887">
-              <caret line="21" column="17" lean-forward="true" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
+            <state relative-caret-position="695">
+              <caret line="218" column="8" lean-forward="true" selection-start-line="218" selection-start-column="8" selection-end-line="218" selection-end-column="8" />
               <folding>
-                <element signature="e#3351#3528#0" />
+                <element signature="e#3477#3952#1" />
               </folding>
             </state>
           </provider>
@@ -104,6 +102,11 @@
         <option value="CMakeLists.txt" />
       </list>
     </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>histor</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="ROOT_SYNC" value="DONT_SYNC" />
@@ -184,7 +187,7 @@
       <updated>1573663771147</updated>
       <workItem from="1573663772315" duration="701000" />
       <workItem from="1574253259839" duration="2784000" />
-      <workItem from="1574256184793" duration="20228000" />
+      <workItem from="1574256184793" duration="32661000" />
     </task>
     <task id="LOCAL-00001" summary="cd">
       <created>1574259246011</created>
@@ -242,11 +245,25 @@
       <option name="project" value="LOCAL" />
       <updated>1574284210050</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="more methods">
+      <created>1574322879404</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1574322879404</updated>
+    </task>
+    <task id="LOCAL-00010" summary="more methods">
+      <created>1574589114914</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1574589114914</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23713000" />
+    <option name="totallyTimeSpent" value="36146000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
@@ -255,6 +272,7 @@
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1323752" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Messages" sideWeight="0.49924356" weight="0.32850242" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -263,9 +281,9 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
-      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.49924356" visible="true" weight="0.32850242" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="8" sideWeight="0.49924356" visible="true" weight="0.32850242" />
       <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info active="true" anchor="bottom" id="Event Log" order="10" sideWeight="0.50075644" side_tool="true" visible="true" weight="0.32850242" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50075644" side_tool="true" weight="0.32850242" />
       <window_info anchor="bottom" id="CMake" order="11" sideWeight="0.49924356" weight="0.14170693" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -324,27 +342,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Commands.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1887">
-          <caret line="21" column="17" lean-forward="true" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
-          <folding>
-            <element signature="e#3351#3528#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Commands.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="177" column="20" selection-start-line="177" selection-start-column="20" selection-end-line="177" selection-end-column="20" />
+        <state relative-caret-position="123">
+          <caret line="222" column="32" selection-start-line="222" selection-start-column="32" selection-end-line="222" selection-end-column="32" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
             <element signature="e#189#336#0" expanded="true" />
             <element signature="e#1738#1899#0" />
             <element signature="e#2944#2989#0" />
             <element signature="e#3711#3747#0" />
-            <element signature="e#3926#3964#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Commands.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="695">
+          <caret line="218" column="8" lean-forward="true" selection-start-line="218" selection-start-column="8" selection-end-line="218" selection-end-column="8" />
+          <folding>
+            <element signature="e#3477#3952#1" />
           </folding>
         </state>
       </provider>

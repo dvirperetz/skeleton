@@ -159,6 +159,7 @@ void JobsList::printJobsList(){
     }
 }
 
+
 void KillCommand::execute() {
     //  make sure the kill command comes with exactly 2 arguments, no less
     //  and no more.
@@ -173,15 +174,18 @@ void KillCommand::execute() {
     } else{
         int signal = abs(strtol(this->args[1], nullptr,0));
         pid_t pid = jobs->getJobById(*(this->args[2]))->getPID();
-        if(kill(,
-                signal) == -1 ){
+
+        if(kill(pid,signal) == -1 ){
+            //  at kill failure
             perror("smash error: kill failed");
         } else{
+            //  at kill success
             cout << "signal number " << signal << " was sent to pid " <<
             pid << endl;
         }
     }
 }
+
 
 
 
@@ -201,18 +205,32 @@ SmallShell::~SmallShell() {
 
 
 Command * SmallShell::CreateCommand(const char* cmd_line) {
-    // For example:
-/*
+
   string cmd_s = string(cmd_line);
   if (cmd_s.find("pwd") == 0) {
     return new GetCurrDirCommand(cmd_line);
   }
-  else if ...
-  .....
+  else if (cmd_s.find("cd") == 0){
+      return new ChangeDirCommand(cmd_line, &last_path);
+  }
+  else if (cmd_s.find("history") == 0){
+      return new HistoryCommand(cmd_line, history);
+  }
+  else if(cmd_s.find("jobs") == 0){
+      return new JobsCommand(cmd_line, jobs);
+  }
+  else if (cmd_s.find("kill") == 0){
+      return new KillCommand(cmd_line, jobs);
+  }
+  else if (cmd_s.find("showpid") == 0){
+      return new ShowPidCommand(cmd_line);
+  }
+
+
+
   else {
     return new ExternalCommand(cmd_line);
   }
-  */
     return nullptr;
 }
 

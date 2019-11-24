@@ -75,7 +75,7 @@ class GetCurrDirCommand : public BuiltInCommand {
 
 class ShowPidCommand : public BuiltInCommand {
  public:
-  ShowPidCommand(const char* cmd_line);
+  ShowPidCommand(const char* cmd_line) : BuiltInCommand(cmd_line){};
   virtual ~ShowPidCommand() {}
   void execute() override;
 };
@@ -123,7 +123,8 @@ class HistoryCommand : public BuiltInCommand {
 };
 
 class JobsList {
- public:
+
+public:
   class JobEntry {
    // TODO: Add your data members
    const char* cmd_text;
@@ -144,17 +145,16 @@ class JobsList {
    unsigned long getCreatedTime(){return created_time;};
    bool getIsStopped(){return isStopped;};
   };
-  std::vector<JobEntry*> job_list;
- // TODO: Add your data members
+    // TODO: Add your data members
     unsigned int job_counter;
- public:
-  JobsList(){job_counter = 0;};
+    std::vector<JobEntry*> job_list;
+    JobsList(){job_counter = 0;};
   ~JobsList();
   void addJob(Command* cmd, bool isStopped = false);
   void printJobsList();
   void killAllJobs();
   void removeFinishedJobs();
-  JobEntry * getJobById(int jobId);
+  JobEntry * getJobById(int jobId){std::find()};
   void removeJobById(int jobId);
   JobEntry * getLastJob(int* lastJobId);
   JobEntry *getLastStoppedJob(int *jobId);
@@ -209,7 +209,13 @@ class CopyCommand : public BuiltInCommand {
 class SmallShell {
  private:
   // TODO: Add your data members
-  SmallShell();
+    char* last_path;
+    CommandsHistory* history;
+    JobsList* jobs;
+  SmallShell() : last_path(), history(), jobs(){
+     std::string root = "~";
+     strcpy(last_path, root.c_str());
+  };
  public:
   Command *CreateCommand(const char* cmd_line);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor

@@ -63,6 +63,9 @@ void _removeBackgroundSign(char* cmd_line) {
 }
 
 // TODO: Add your implementation for classes in Commands.h
+Command::Command(const char* cmd_line) : cmd(cmd_line), args(){
+    _parseCommandLine(cmd_line, args);
+}
 
 void GetCurrDirCommand::execute() {
     char buf[MAXPATHLEN];
@@ -186,17 +189,100 @@ void KillCommand::execute() {
     }
 }
 
+void ShowPidCommand::execute() {
+    cout << "smash pid is " << getpid() << endl;
+}
 
+void ForegroundCommand::execute() {
+   if(args[1] == nullptr && fgJobList->job_list.empty()){
+       cout << "smash error: fg: jobs list is empty" << endl;
+   }
+   else if (args[2] != nullptr || strtol(args[1], nullptr,0) == 0){
+       cout << "smash error: fg: invalid arguments" << endl;
+   }
+   else if(fgJobList->getJobById(strtol(args[1], nullptr,0)) == nullptr){
+     cout << "smash error: fg: job-id " << strtol(args[1], nullptr,0) <<
+     " does not exist" << endl;
+   }
+   else if (args[1] != nullptr){
+       int job_id = strtol(args[1], nullptr,0);
+       cout << fgJobList->getJobById(job_id)->getCMD() << " : " <<
+       fgJobList->getJobById(job_id)->getPID() << endl;
+   }
+   else{ // case: no args and joblist isnt empty
+       int job_id = strtol(args[1], nullptr,0);
+       cout << fgJobList->getLastJob(nullptr)->getCMD() << " : " <<
+            fgJobList->getLastJob(nullptr)->getPID() << endl;
+   }
+    int job_id = strtol(args[1], nullptr,0);
+    kill(fgJobList->getJobById(job_id)->getPID(), SIGCONT);
+    int status = 0;
+    int w;
+    do{
+        w = waitpid(fgJobList->getJobById(job_id)->getPID(), &status, WNOHANG);
+        if (w == -1){
+            perror("smash error: waitpid failed");
+        }
+    }while (!WIFCONTINUED(status));
+    fgJobList->removeJobById(job_id);
+}
 
+void JobsList::removeJobById(int jobId){
+    int index;
+    for (vector<JobEntry*>::iterator it = this->job_list.begin(); it != this->job_list.end() ; it++){
+        if ( (*it)->getJobID() == jobId ){
+            index = std::distance(this->job_list.begin(), it);
+            this->job_list.erase(this->job_list.begin()+index);
+            return;
+        }
+    }
+}
 
+JobsList::JobEntry* JobsList::getLastJob(int *lastJobId) {
+    if(lastJobId != nullptr){
+        *lastJobId = this->job_list.back()->getJobID();
+    }
+    return  this->job_list.back();
+}
 
+void BackgroundCommand::execute() {
+    int job_id;
+    if(args[1] == nullptr && (bgJobList->getLastStoppedJob(nullptr) == nullptr)){
+        cout << "smash error: bg: there is no stopped jobs to resume" << endl;
+    }
+    else if (args[2] != nullptr || strtol(args[1], nullptr,0) == 0){
+        cout << "smash error: bg: invalid arguments" << endl;
+    }
+    else if(bgJobList->getJobById(strtol(args[1], nullptr,0)) == nullptr){
+        cout << "smash error: bg: job-id " << strtol(args[1], nullptr,0) <<
+             " does not exist" << endl;
+    }
+    else if ( bgJobList->getJobById(strtol(args[1], nullptr,0))->getIsStopped() == 0 ) {// case: job exist but not stopped
+        cout << "smash error: bg: job-id " << strtol(args[1], nullptr,0) <<
+             " is already running in the background" << endl;
+    }
+    else if ( args[1] == nullptr ){ // case : execute on the last stopped job
+        job_id = bgJobList->getLastStoppedJob(nullptr)->getJobID();
+        cout <<  bgJobList->getJobById(job_id)->getCMD() << " : " <<
+             bgJobList->getJobById(job_id)->getPID() << endl;
+    }
 
+}
+JobsList::JobEntry* JobsList::getLastStoppedJob(int *jobId) {
+    for (vector<JobEntry*>::reverse_iterator i = job_list.rbegin(); i!= job_list.rend(); ++i){
+        if ( (*i)->getIsStopped() ){
+            if( jobId!= nullptr){
+                *jobId = (*i)->getJobID();
+            }
+            return  *i;
+        }
+        return nullptr; // no stopped job in the list
+    }
+}
 
-
-
-
-SmallShell::SmallShell() {
+SmallShell::SmallShell() : last_path(nullptr) {
 // TODO: add your implementation
+
 }
 
 SmallShell::~SmallShell() {
@@ -211,7 +297,7 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
     return new GetCurrDirCommand(cmd_line);
   }
   else if (cmd_s.find("cd") == 0){
-      return new ChangeDirCommand(cmd_line, &last_path);
+      return new ChangeDirCommand(cmd_line, last_path);
   }
   else if (cmd_s.find("history") == 0){
       return new HistoryCommand(cmd_line, history);

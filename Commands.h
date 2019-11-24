@@ -16,7 +16,7 @@ protected:
     const char* cmd;
     char* args[COMMAND_MAX_ARGS];
 public:
-  explicit Command(const char* cmd_line) : cmd(cmd_line) {};
+  explicit Command(const char* cmd_line);
   virtual ~Command();
   virtual void execute() = 0;
   const char* getCmd(){return cmd;};
@@ -27,7 +27,7 @@ public:
 
 class BuiltInCommand : public Command {
  public:
-  BuiltInCommand(const char* cmd_line);
+  BuiltInCommand(const char* cmd_line) : Command(cmd_line){};
   virtual ~BuiltInCommand() {}
 };
 
@@ -184,16 +184,20 @@ class KillCommand : public BuiltInCommand {
 
 class ForegroundCommand : public BuiltInCommand {
  // TODO: Add your data members
+    JobsList* fgJobList;
  public:
-  ForegroundCommand(const char* cmd_line, JobsList* jobs);
+  ForegroundCommand(const char* cmd_line, JobsList* jobs) :
+    BuiltInCommand(cmd_line), fgJobList(jobs){};
   virtual ~ForegroundCommand() {}
   void execute() override;
 };
 
 class BackgroundCommand : public BuiltInCommand {
  // TODO: Add your data members
+    JobsList* bgJobList;
  public:
-  BackgroundCommand(const char* cmd_line, JobsList* jobs);
+  BackgroundCommand(const char* cmd_line, JobsList* jobs) :
+  BuiltInCommand(cmd_line), bgJobList(jobs) {};
   virtual ~BackgroundCommand() {}
   void execute() override;
 };
@@ -209,13 +213,10 @@ class CopyCommand : public BuiltInCommand {
 class SmallShell {
  private:
   // TODO: Add your data members
-    char* last_path;
+    char** last_path;
     CommandsHistory* history;
     JobsList* jobs;
-  SmallShell() : last_path(), history(), jobs(){
-     std::string root = "~";
-     strcpy(last_path, root.c_str());
-  };
+  SmallShell();
  public:
   Command *CreateCommand(const char* cmd_line);
   SmallShell(SmallShell const&)      = delete; // disable copy ctor

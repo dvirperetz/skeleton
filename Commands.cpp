@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
+#include "fcntl.h"
 
 using namespace std;
 
@@ -263,9 +264,14 @@ void BackgroundCommand::execute() {
     }
     else if ( args[1] == nullptr ){ // case : execute on the last stopped job
         job_id = bgJobList->getLastStoppedJob(nullptr)->getJobID();
-        cout <<  bgJobList->getJobById(job_id)->getCMD() << " : " <<
-             bgJobList->getJobById(job_id)->getPID() << endl;
     }
+    else{
+        job_id = strtol(args[1], nullptr,0); // case : execute on the <job id> stopped job
+    }
+    cout <<  bgJobList->getJobById(job_id)->getCMD() << " : " <<
+         bgJobList->getJobById(job_id)->getPID() << endl;
+    kill(bgJobList->getJobById(job_id)->getPID(), SIGCONT);
+    bgJobList->getJobById(job_id)->setIsStopped(false);
 
 }
 JobsList::JobEntry* JobsList::getLastStoppedJob(int *jobId) {
@@ -280,7 +286,55 @@ JobsList::JobEntry* JobsList::getLastStoppedJob(int *jobId) {
     }
 }
 
-SmallShell::SmallShell() : last_path(nullptr) {
+void QuitCommand::execute() {
+    if(strcmp(args[1], "kill") == 0){
+        cout << "smash: sending SIGKILL signal to " << qJobs->job_list.size() << " jobs:" << endl;
+        for(vector<JobsList::JobEntry*>::iterator it = qJobs->job_list.begin(); it != qJobs->job_list.end(); it++){
+            cout << (*it)->getPID() << ": " << (*it)->getCMD() << endl;
+        }
+        qJobs->killAllJobs();
+    }
+    exit(0);
+}
+
+
+void JobsList::killAllJobs() {
+    for(vector<JobsList::JobEntry*>::iterator it = job_list.begin(); it != job_list.end(); it++){
+        kill((*it)->getPID(), SIGKILL);
+    }
+}
+
+void CopyCommand::execute() {
+    char c;
+    int source, dest;
+    ssize_t count = 1;
+
+    source = open(args[1], O_RDONLY);
+    if(source == -1){
+        perror("smash error: open failed");
+    }
+    dest = open(args[2], O_WRONLY | O_CREAT);
+    if(dest == -1){
+        close(source);
+        perror("smash error: open failed");
+    }
+    while ((read(source, &c, 1) > 0 && count > 0)){
+        count = write(dest, &c, 1);
+    }
+}
+
+
+void ExternalCommand::execute() {
+    string cmd_s = string(cmd);
+    if(cmd_s.find("?") == 0 || cmd_s.find("*") == 0){
+
+    }
+    execv("/bin/bash", {"bash", "-c", this->getCmd()})
+}
+
+
+
+SmallShell::SmallShell() : last_path(nullptr), jobs(new vector) {
 // TODO: add your implementation
 
 }
@@ -311,9 +365,18 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
   else if (cmd_s.find("showpid") == 0){
       return new ShowPidCommand(cmd_line);
   }
-
-
-
+  else if (cmd_s.find("fg") == 0){
+      return new ForegroundCommand(cmd_line, jobs);
+  }
+  else if (cmd_s.find("bg") == 0){
+      return new BackgroundCommand(cmd_line, jobs);
+  }
+  else if (cmd_s.find("quit") == 0){
+      return new QuitCommand(cmd_line, jobs);
+  }
+  else if (cmd_s.find("cp") == 0){
+      return new CopyCommand(cmd_line);
+  }
   else {
     return new ExternalCommand(cmd_line);
   }

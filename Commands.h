@@ -33,7 +33,7 @@ class BuiltInCommand : public Command {
 
 class ExternalCommand : public Command {
  public:
-  ExternalCommand(const char* cmd_line);
+  ExternalCommand(const char* cmd_line) : Command(cmd_line){};
   virtual ~ExternalCommand() {}
   void execute() override;
 };
@@ -79,13 +79,14 @@ class ShowPidCommand : public BuiltInCommand {
   virtual ~ShowPidCommand() {}
   void execute() override;
 };
-
 class JobsList;
 class QuitCommand : public BuiltInCommand {
 // TODO: Add your data members public:
-  QuitCommand(const char* cmd_line, JobsList* jobs);
-  virtual ~QuitCommand() {}
-  void execute() override;
+    JobsList* qJobs;
+public:
+    QuitCommand(const char* cmd_line, JobsList* jobs) : BuiltInCommand(cmd_line), qJobs(jobs){};
+     virtual ~QuitCommand() {}
+      void execute() override;
 };
 
 class CommandsHistory {
@@ -144,6 +145,7 @@ public:
    const char* getCMD(){return cmd_text;};
    unsigned long getCreatedTime(){return created_time;};
    bool getIsStopped(){return isStopped;};
+   void setIsStopped(bool b){this->isStopped=b;};
   };
     // TODO: Add your data members
     unsigned int job_counter;
@@ -162,7 +164,6 @@ public:
 };
 class JobsCommand : public BuiltInCommand {
  // TODO: Add your data members
-    const char* cmd_line;
     JobsList* jobs;
  public:
     JobsCommand(const char* cmd_line, JobsList* jobs) :
@@ -204,7 +205,8 @@ class BackgroundCommand : public BuiltInCommand {
 
 class CopyCommand : public BuiltInCommand {
  public:
-  CopyCommand(const char* cmd_line);
+  CopyCommand(const char* cmd_line) :
+        BuiltInCommand(cmd_line){};
   virtual ~CopyCommand() {}
   void execute() override;
 };

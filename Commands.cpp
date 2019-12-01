@@ -107,6 +107,7 @@ void ChangeDirCommand::execute() {
         } else{
             if(chdir(*plastPwd) == -1){
                 perror("smash error: chdir failed");
+                return;
             }
             SmallShell::getInstance().setLastPath(current_path);
         }
@@ -119,12 +120,14 @@ void ChangeDirCommand::execute() {
         pPath = pPath.substr(0,pPath.find_last_of('/'));
         if(chdir(pPath.c_str()) == -1){
             perror("smash error: chdir failed");
+            return;
         }
         SmallShell::getInstance().setLastPath(current_path);
     } else{
         // cd <PATH>
         if(chdir(args[1]) == -1){
             perror("smash error: chdir failed");
+            return;
         }
         SmallShell::getInstance().setLastPath(current_path);
     }
@@ -179,8 +182,10 @@ void JobsCommand::execute() {
     this->jobs->printJobsList();
 }
 
-void JobsList::addJob(Command* cmd, bool isStopped){
-    JobEntry* new_job = new JobEntry(cmd->getCmd());
+void JobsList::addJob(Command* cmd, bool isStopped, pid_t pid){
+    char* temp = (char*) malloc(strlen(cmd->getCmd()) + 1);
+    strcpy(temp, cmd->getCmd());
+    JobEntry* new_job = new JobEntry(temp, pid);
     new_job->setJobID(++job_counter);
     this->job_list.push_back(new_job);
 }
@@ -188,25 +193,25 @@ void JobsList::addJob(Command* cmd, bool isStopped){
 
 void JobsList::printJobsList(){
     int status;
-    for(std::vector<JobEntry*>::iterator it = this->job_list.begin();
-        it != this->job_list.end(); ++it) {
+    for(auto & it : this->job_list) {
         // go over the vector to check for finished jobs
-        int job_id = (*it)->getJobID();
-        int job_pid =  (*it)->getPID();
+
+        int job_id = it->getJobID();
+        int job_pid =  it->getPID();
         if( waitpid( job_pid, &status,WNOHANG) == job_pid ){ // case : the job is finished
             SmallShell::getInstance().getJobsList()->removeJobById(job_id);
             continue;
         }
         // the printing:
-        if(!(*it)->getIsStopped()){
-            cout << (*it)->getJobID() << " " << (*it)->getCMD() << " : " <<
-                 (*it)->getPID() << " " <<
-                 (difftime(time(nullptr), (*it)->getCreatedTime() )) <<
+        if(!it->getIsStopped()){
+            cout << it->getJobID() << " " << it->getCMD() << " : " <<
+                 it->getPID() << " " <<
+                 (difftime(time(nullptr), it->getCreatedTime() )) <<
                  " secs" << endl;
         }else{
-            cout << (*it)->getJobID() << " " << (*it)->getCMD() << " : " <<
-                 (*it)->getPID() << " " <<
-                 (difftime(time(nullptr), (*it)->getCreatedTime() )) <<
+            cout << it->getJobID() << " " << it->getCMD() << " : " <<
+                 it->getPID() << " " <<
+                 (difftime(time(nullptr), it->getCreatedTime() )) <<
                  " secs (stopped)" << endl;
         }
     }
@@ -288,9 +293,8 @@ void JobsList::removeJobById(int jobId){
     }
 }
 
-JobsList::JobEntry::JobEntry(const char* cmd_text) :
-        cmd_text(cmd_text), isStopped(false) {
-    pid = getpid();
+JobsList::JobEntry::JobEntry(const char* cmd_text, pid_t pid) :
+        cmd_text(cmd_text), isStopped(false) , pid(pid){
     created_time= time(nullptr);
 };
 
@@ -399,30 +403,27 @@ bool CheckIfComplex ( const char* cmd){
 }
 
 void ExternalCommand::execute() {
+    SmallShell* testi = &(SmallShell::getInstance());
     pid_t pid = fork();
     if(pid == -1) { // fork failed
         perror("smash error: fork failed");
     }
     if( pid == 0) { // child process ( we will execv from it )
-        setpgrp();
-        SmallShell::getInstance().SetFgPid(getpid()); // updating the smash member : Foreground pid
-        if (CheckIfComplex(
-                this->cmd)) { // case: Complex command ; execute with bash
-            std::string str = string(cmd);
-            char * writable = new char[str.size() + 1];
-            std::copy(str.begin(), str.end(), writable);
-            writable[str.size()] = '\0';
-            char *complex_args[4] = {"/bin/bash", "-c", writable, nullptr};
-            if (execv("/bin/bash", complex_args) == -1 ){
-                perror("smash error: execv failed");
-            }
+        setpgrp(); //   changes the son's group pid to its own
+        std::string str = string(cmd);
+        char * writable = new char[str.size() + 1];
+        std::copy(str.begin(), str.end(), writable);
+        writable[str.size()] = '\0';
+        char *extern_args[4] = {"/bin/bash", "-c", writable, nullptr};
+        if (execv("/bin/bash", extern_args) == -1 ){
+            perror("smash error: execv failed");
         }
+        /*
         else { //  the command is simple ; execute in the smash
             string cmd_s = string(this->cmd);
             string first_word = cmd_s.substr(0, cmd_s.find(" "));
             const char *execFileName = first_word.c_str();  // getting the command to execute
-            char *simple_args[sizeof(this->args) +
-                                    1];  // creating an array for the args (for execv syscall)
+            char *simple_args[sizeof(this->args) + 1];  // creating an array for the args (for execv syscall)
             simple_args[0] = const_cast<char*>(execFileName); // first arg is the fileName
             for (int i = 1; i < sizeof(simple_args); i++) {
                 simple_args[i] = this->args[i - 1];
@@ -431,15 +432,15 @@ void ExternalCommand::execute() {
                 -1) { // execvp : search for executable file according to the external command
                 perror("smash error: execvp failed");
             }
-        }
-    }else{ // parent process : the smash
+        }*/
+    }
+    else{ // parent process : the smash
         int status;
         if( !_isBackgroundComamnd(this->getCmd())){
+            SmallShell::getInstance().SetFgPid(getpid()); // updating the smash member : Foreground pid
             waitpid(pid,&status,0);
-        }
-
-        if(_isBackgroundComamnd(this->getCmd())){  // case : background command. it will be added to the joblist
-            SmallShell::getInstance().getJobsList()->addJob(this,false);
+        } else{ //it's a background command
+            SmallShell::getInstance().getJobsList()->addJob(this,false, pid);
         }
         return;
     }

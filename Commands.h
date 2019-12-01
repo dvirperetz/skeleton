@@ -140,7 +140,7 @@ public:
         pid_t pid;
         unsigned int job_id;
     public:
-        JobEntry(const char* cmd_text);
+        JobEntry(const char* cmd_text, pid_t pid);
         void setJobID(unsigned int job_id){this->job_id=job_id;};
         unsigned int getJobID(){return this->job_id;};
         pid_t getPID(){return this->pid;};
@@ -152,11 +152,11 @@ public:
     // TODO: Add your data members
     unsigned int job_counter;
     std::vector<JobEntry*> job_list;
-    JobsList(){job_counter = 0;};
+    JobsList() : job_list(), job_counter(0){};
     ~JobsList(){
       job_list.clear();
     };
-    void addJob(Command* cmd, bool isStopped = false);
+    void addJob(Command* cmd, bool isStopped = false, pid_t pid = 0);
     void printJobsList();
     void killAllJobs();
     void removeFinishedJobs();

@@ -187,8 +187,17 @@ void JobsList::addJob(Command* cmd, bool isStopped){
 
 
 void JobsList::printJobsList(){
+    int status;
     for(std::vector<JobEntry*>::iterator it = this->job_list.begin();
         it != this->job_list.end(); ++it) {
+        // go over the vector to check for finished jobs
+        int job_id = (*it)->getJobID();
+        int job_pid =  (*it)->getPID();
+        if( waitpid( job_pid, &status,WNOHANG) == job_pid ){ // case : the job is finished
+            SmallShell::getInstance().getJobsList()->removeJobById(job_id);
+            continue;
+        }
+        // the printing:
         if(!(*it)->getIsStopped()){
             cout << (*it)->getJobID() << " " << (*it)->getCMD() << " : " <<
                  (*it)->getPID() << " " <<
@@ -428,6 +437,10 @@ void ExternalCommand::execute() {
         if( !_isBackgroundComamnd(this->getCmd())){
             waitpid(pid,&status,0);
         }
+
+        if(_isBackgroundComamnd(this->getCmd())){  // case : background command. it will be added to the joblist
+            SmallShell::getInstance().getJobsList()->addJob(this,false);
+        }
         return;
     }
 }
@@ -509,9 +522,7 @@ void SmallShell::executeCommand(const char *cmd_line) {
     // for example:
     Command* cmd = CreateCommand(cmd_line); // example
     this->cur_cmd = cmd;
-    if(_isBackgroundComamnd(cmd_line)){  // case : background command. it will be added to the joblist
-        this->getJobsList()->addJob(cmd,false);
-    }
+
     history->addRecord(cmd_line);
     cmd->execute();
 

@@ -152,7 +152,7 @@ public:
     // TODO: Add your data members
     unsigned int job_counter;
     std::vector<JobEntry*> job_list;
-    JobsList() : job_list(), job_counter(0){};
+    JobsList() : job_counter(0), job_list() {};
     ~JobsList(){
       job_list.clear();
     };

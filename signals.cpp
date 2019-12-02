@@ -9,19 +9,18 @@ using namespace std;
 
 void ctrlZHandler(int sig_num) {
     cout << "smash: got ctrl-Z" << endl;
-    JobsList* jobs_ptr =SmallShell::getInstance().getJobsList();
-    const char* ctrlZ_cmd_line = SmallShell::getInstance().getCurCmdLine();
+    JobsList* jobs_ptr = SmallShell::getInstance().getJobsList();
     Command* cur_cmd = SmallShell::getInstance().getCurCmd();
+    jobs_ptr->addJob(cur_cmd,SmallShell::getInstance().getFgPid(), true); // add a stopped job to the jobslist
     if( SmallShell::getInstance().getFgPid() != -1) {// there is a process in the fg
-        if (kill(getpid(), SIGSTOP) == -1) {
+        if (kill(SmallShell::getInstance().getFgPid(), 19) == -1) {
             perror("smash error: kill failed");
             return;
         }
-        jobs_ptr->addJob(cur_cmd, true); // add a stopped job to the jobslist
         cout << "smash: process " << SmallShell::getInstance().getFgPid()
                 << " was stopped" << endl;
-
     }
+
 }
 
 void ctrlCHandler(int sig_num) {

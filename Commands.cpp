@@ -146,7 +146,7 @@ void CommandsHistory::addRecord(const char* cmd_line){
 
 void CommandsHistory::printHistory() {
     if(cmd_count <= MAX_HISTORY_SIZE){
-        for(int i = 0; i < cmd_count; i++){
+        for(unsigned int i = 0; i < cmd_count; i++){
             //  don't print duplicates
             if(i < (MAX_HISTORY_SIZE-1) && history_list[(i+1)] && !strcmp(history_list[i]->getCmdText(),history_list[(i+1)]->getCmdText())){
                 continue;
@@ -205,7 +205,6 @@ void JobsList::removeFinishedJobs() {
 }
 
 void JobsList::printJobsList(){
-    int status;
     removeFinishedJobs();
     for(auto & it : this->job_list) {
         // the printing:
@@ -286,7 +285,8 @@ void ForegroundCommand::execute() {
         perror("smash error: kill failed");
     }
     int child_pid = fgJobList->getJobById(job_id)->getPID();
-    int w = waitpid(child_pid, nullptr, 0);
+    SmallShell::getInstance().SetFgPid(child_pid);
+    int w = waitpid(child_pid, nullptr, WUNTRACED);
     if (w == -1){
         perror("smash error: waitpid failed");
     }
@@ -296,7 +296,7 @@ void ForegroundCommand::execute() {
 void JobsList::removeJobById(int jobId){
     int index;
     for (vector<JobEntry*>::iterator it = this->job_list.begin(); it != this->job_list.end() ; it++){
-        if ( (*it)->getJobID() == jobId ){
+        if ( (int) (*it)->getJobID() == jobId ){
             index = std::distance(this->job_list.begin(), it);
             this->job_list.erase(this->job_list.begin()+index);
             return;
@@ -312,7 +312,7 @@ JobsList::JobEntry::JobEntry(const char* cmd_text, pid_t pid) :
 JobsList::JobEntry* JobsList::getJobById(int jobId){
     for(vector<JobEntry*>::iterator it = job_list.begin(); it != job_list.end();
     ++it){
-        if((*it)->getJobID() == jobId){
+        if((int) (*it)->getJobID() == jobId){
             return (*it);
         }
     }
@@ -362,8 +362,8 @@ JobsList::JobEntry* JobsList::getLastStoppedJob(int *jobId) {
             }
             return  *i;
         }
-        return nullptr; // no stopped job in the list
     }
+    return nullptr; // no stopped job in the list
 }
 
 void QuitCommand::execute() {
@@ -420,15 +420,20 @@ void ExternalCommand::execute() {
     }
     if( pid == 0) { // child process ( we will execv from it )
         setpgrp(); //   changes the son's group pid to its own
+        SmallShell::getInstance().SetFgPid(getpid()); // updating the smash member : Foreground pid
+
+        cout << " in son :son pid is :  " << getpid() << "and the fg pid we saved is : "<< SmallShell::getInstance().getFgPid() << endl;
         std::string str = string(cmd);
         char * writable = new char[str.size() + 1];
         std::copy(str.begin(), str.end(), writable);
         writable[str.size()] = '\0';
         _removeBackgroundSign(writable);
-        char *extern_args[4] = {"/bin/bash", "-c", writable, nullptr};
+        char *extern_args[4] = {(char*) "/bin/bash", (char*) "-c", writable, nullptr};
         if (execv("/bin/bash", extern_args) == -1 ){
             perror("smash error: execv failed");
         }
+        cout << " after exec : son pid is :  " << getpid() << "and the fg pid we saved is : "<< SmallShell::getInstance().getFgPid() << endl;
+
         /*
         else { //  the command is simple ; execute in the smash
             string cmd_s = string(this->cmd);
@@ -448,8 +453,9 @@ void ExternalCommand::execute() {
     else{ // parent process : the smash
         int status;
         if( !_isBackgroundComamnd(this->getCmd())){
-            SmallShell::getInstance().SetFgPid(getpid()); // updating the smash member : Foreground pid
-            waitpid(pid,&status,0);
+            SmallShell::getInstance().SetFgPid(pid); // updating the smash member : Foreground pid
+            cout << " son pid is : " << pid << " and parent(smash) pid is " << getpid() << endl;
+            waitpid(pid,&status,WUNTRACED);
         } else{ //it's a background command
             SmallShell::getInstance().getJobsList()->addJob(this,pid, false);
         }
@@ -471,7 +477,7 @@ Command* SmallShell::getCurCmd() {
 
 SmallShell::SmallShell() :
     last_path(nullptr), history(new CommandsHistory()),
-    jobs(new JobsList()), fg_pid(), cur_cmd() {}
+    jobs(new JobsList()), fg_pid(-1), cur_cmd() {}
 
 
 SmallShell::~SmallShell() {
@@ -537,7 +543,8 @@ void SmallShell::executeCommand(const char *cmd_line) {
 
     history->addRecord(cmd_line);
     cmd->execute();
-
+    cout << " b4 finish execute : fgpid is :" << fg_pid <<endl;
+    this->fg_pid = -1;
 
 }
 // Please note that you must fork smash process for some commands (e.g., external commands....)

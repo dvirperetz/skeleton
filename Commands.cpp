@@ -227,13 +227,14 @@ void JobsList::printJobsList(){
 void KillCommand::execute() {
     //  make sure the kill command comes with exactly 2 arguments, no less
     //  and no more.
-    int job_id = strtol(this->args[2], nullptr,0);
+
     if(this->args[1] == nullptr || this->args[2] == nullptr ||
        this->args[3] != nullptr){
         cout << "smash error: kill: invalid arguments" << endl;
+        return;
     }
-        //if the job-id doesn't exist
-    else if(jobs->getJobById(job_id) == nullptr){
+    int job_id = strtol(this->args[2], nullptr,0);
+    if(jobs->getJobById(job_id) == nullptr){
         cout << "smash error: kill: job-id " << this->args[2]
              << " does not exist" << endl;
     } else{
@@ -256,36 +257,39 @@ void ShowPidCommand::execute() {
 }
 
 void ForegroundCommand::execute() {
+    int job_id = 0;
     if(args[1] == nullptr && fgJobList->job_list.empty()){
         cout << "smash error: fg: jobs list is empty" << endl;
+        return;
     }
-    else if (args[2] != nullptr || strtol(args[1], nullptr,0) == 0){
+    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0) == 0)){
         cout << "smash error: fg: invalid arguments" << endl;
+        return;
     }
-    else if(fgJobList->getJobById(strtol(args[1], nullptr,0)) == nullptr){
+    else if(args[1] && fgJobList->getJobById(strtol(args[1], nullptr,0)) == nullptr){
         cout << "smash error: fg: job-id " << strtol(args[1], nullptr,0) <<
              " does not exist" << endl;
+        return;
     }
     else if (args[1] != nullptr){
-        int job_id = strtol(args[1], nullptr,0);
+        job_id = strtol(args[1], nullptr,0);
         cout << fgJobList->getJobById(job_id)->getCMD() << " : " <<
              fgJobList->getJobById(job_id)->getPID() << endl;
     }
     else{ // case: no args and joblist isnt empty
-        int job_id = strtol(args[1], nullptr,0);
         cout << fgJobList->getLastJob(nullptr)->getCMD() << " : " <<
              fgJobList->getLastJob(nullptr)->getPID() << endl;
+        job_id = fgJobList->getLastJob(nullptr)->getJobID();
     }
-    int job_id = strtol(args[1], nullptr,0);
-    kill(fgJobList->getJobById(job_id)->getPID(), SIGCONT);
-    int status = 0;
-    int w;
-    do{
-        w = waitpid(fgJobList->getJobById(job_id)->getPID(), &status, WNOHANG);
-        if (w == -1){
-            perror("smash error: waitpid failed");
-        }
-    }while (!WIFCONTINUED(status));
+
+    if(kill(fgJobList->getJobById(job_id)->getPID(), SIGCONT) == -1){
+        perror("smash error: kill failed");
+    }
+    int child_pid = fgJobList->getJobById(job_id)->getPID();
+    int w = waitpid(child_pid, nullptr, 0);
+    if (w == -1){
+        perror("smash error: waitpid failed");
+    }
     fgJobList->removeJobById(job_id);
 }
 

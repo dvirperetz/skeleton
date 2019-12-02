@@ -156,7 +156,7 @@ public:
     ~JobsList(){
       job_list.clear();
     };
-    void addJob(Command* cmd, bool isStopped = false, pid_t pid = 0);
+    void addJob(Command* cmd,pid_t pid, bool isStopped = false);
     void printJobsList();
     void killAllJobs();
     void removeFinishedJobs();

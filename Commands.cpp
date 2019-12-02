@@ -79,6 +79,7 @@ void _removeBackgroundSign(char* cmd_line) {
     cmd_line[str.find_last_not_of(whitespace, idx-1) + 1] = 0;
 }
 
+
 // TODO: Add your implementation for classes in Commands.h
 Command::Command(const char* cmd_line) : cmd(cmd_line), args(){
     _parseCommandLine(cmd_line, args);
@@ -182,7 +183,7 @@ void JobsCommand::execute() {
     this->jobs->printJobsList();
 }
 
-void JobsList::addJob(Command* cmd, bool isStopped, pid_t pid){
+void JobsList::addJob(Command* cmd, pid_t pid, bool isStopped){
     char* temp = (char*) malloc(strlen(cmd->getCmd()) + 1);
     strcpy(temp, cmd->getCmd());
     JobEntry* new_job = new JobEntry(temp, pid);
@@ -190,18 +191,23 @@ void JobsList::addJob(Command* cmd, bool isStopped, pid_t pid){
     this->job_list.push_back(new_job);
 }
 
+void JobsList::removeFinishedJobs() {
+    for (auto it = job_list.begin(); it != job_list.end();) {
+
+        int cur_pid = (*it)->getPID();
+
+        if (waitpid(cur_pid,NULL, WNOHANG)) {
+            job_list.erase(it);
+        } else {
+            it++;
+        }
+    }
+}
 
 void JobsList::printJobsList(){
     int status;
+    removeFinishedJobs();
     for(auto & it : this->job_list) {
-        // go over the vector to check for finished jobs
-
-        int job_id = it->getJobID();
-        int job_pid =  it->getPID();
-        if( waitpid( job_pid, &status,WNOHANG) == job_pid ){ // case : the job is finished
-            SmallShell::getInstance().getJobsList()->removeJobById(job_id);
-            continue;
-        }
         // the printing:
         if(!it->getIsStopped()){
             cout << it->getJobID() << " " << it->getCMD() << " : " <<
@@ -403,7 +409,6 @@ bool CheckIfComplex ( const char* cmd){
 }
 
 void ExternalCommand::execute() {
-    SmallShell* testi = &(SmallShell::getInstance());
     pid_t pid = fork();
     if(pid == -1) { // fork failed
         perror("smash error: fork failed");
@@ -414,6 +419,7 @@ void ExternalCommand::execute() {
         char * writable = new char[str.size() + 1];
         std::copy(str.begin(), str.end(), writable);
         writable[str.size()] = '\0';
+        _removeBackgroundSign(writable);
         char *extern_args[4] = {"/bin/bash", "-c", writable, nullptr};
         if (execv("/bin/bash", extern_args) == -1 ){
             perror("smash error: execv failed");
@@ -440,7 +446,7 @@ void ExternalCommand::execute() {
             SmallShell::getInstance().SetFgPid(getpid()); // updating the smash member : Foreground pid
             waitpid(pid,&status,0);
         } else{ //it's a background command
-            SmallShell::getInstance().getJobsList()->addJob(this,false, pid);
+            SmallShell::getInstance().getJobsList()->addJob(this,pid, false);
         }
         return;
     }

@@ -392,15 +392,18 @@ void CopyCommand::execute() {
     source = open(args[1], O_RDONLY);
     if(source == -1){
         perror("smash error: open failed");
+        return;
     }
     dest = open(args[2], O_WRONLY | O_CREAT);
     if(dest == -1){
         close(source);
         perror("smash error: open failed");
+        return;
     }
     while ((read(source, &c, 1) > 0 && count > 0)){
         count = write(dest, &c, 1);
     }
+    std::cout << "smash: " << args[1] << " was copied to " << args[2] << endl;
 }
 /**
  * A function that checks whether a command is a simple one(return false) or complex one(true)
@@ -422,7 +425,6 @@ void ExternalCommand::execute() {
         setpgrp(); //   changes the son's group pid to its own
         SmallShell::getInstance().SetFgPid(getpid()); // updating the smash member : Foreground pid
 
-        cout << " in son :son pid is :  " << getpid() << "and the fg pid we saved is : "<< SmallShell::getInstance().getFgPid() << endl;
         std::string str = string(cmd);
         char * writable = new char[str.size() + 1];
         std::copy(str.begin(), str.end(), writable);
@@ -432,7 +434,6 @@ void ExternalCommand::execute() {
         if (execv("/bin/bash", extern_args) == -1 ){
             perror("smash error: execv failed");
         }
-        cout << " after exec : son pid is :  " << getpid() << "and the fg pid we saved is : "<< SmallShell::getInstance().getFgPid() << endl;
 
         /*
         else { //  the command is simple ; execute in the smash
@@ -454,7 +455,6 @@ void ExternalCommand::execute() {
         int status;
         if( !_isBackgroundComamnd(this->getCmd())){
             SmallShell::getInstance().SetFgPid(pid); // updating the smash member : Foreground pid
-            cout << " son pid is : " << pid << " and parent(smash) pid is " << getpid() << endl;
             waitpid(pid,&status,WUNTRACED);
         } else{ //it's a background command
             SmallShell::getInstance().getJobsList()->addJob(this,pid, false);
@@ -543,7 +543,6 @@ void SmallShell::executeCommand(const char *cmd_line) {
 
     history->addRecord(cmd_line);
     cmd->execute();
-    cout << " b4 finish execute : fgpid is :" << fg_pid <<endl;
     this->fg_pid = -1;
 
 }

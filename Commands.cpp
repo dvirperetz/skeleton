@@ -394,7 +394,7 @@ void CopyCommand::execute() {
         perror("smash error: open failed");
         return;
     }
-    dest = open(args[2], O_WRONLY | O_CREAT);
+    dest = open(args[2], O_WRONLY | O_CREAT | S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     if(dest == -1){
         close(source);
         perror("smash error: open failed");

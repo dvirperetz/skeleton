@@ -158,7 +158,7 @@ void CommandsHistory::printHistory() {
             }
 
             cout << right << setw(5) << history_list[i]->getTimeStamp()
-                 << " " << history_list[i]->getCmdText()  << endl;
+                 << "  " << history_list[i]->getCmdText()  << endl;
         }
     } else{
         int pivot = cmd_count%MAX_HISTORY_SIZE;
@@ -362,7 +362,7 @@ void BackgroundCommand::execute() {
         cout << "smash error: bg: there is no stopped jobs to resume" << endl;
         return;
     }
-    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0)) == 0){
+    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0)== 0)){
         cout << "smash error: bg: invalid arguments" << endl;
         return;
     }

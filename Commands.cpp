@@ -8,7 +8,6 @@
 #include "Commands.h"
 #include "fcntl.h"
 
-using namespace std;
 
 #if 0
 #define FUNC_ENTRY()  \
@@ -20,6 +19,13 @@ using namespace std;
 #define FUNC_ENTRY()
 #define FUNC_EXIT()
 #endif
+
+using std::string;
+using std::cout;
+using std::endl;
+using std::vector;
+using std::right;
+using std::setw;
 
 const std::string WHITESPACE = " \n\r\t\f\v";
 string _ltrim(const std::string& s)
@@ -132,7 +138,6 @@ void ChangeDirCommand::execute() {
         }
         SmallShell::getInstance().setLastPath(current_path);
     }
-
 }
 
 void CommandsHistory::addRecord(const char* cmd_line){
@@ -385,25 +390,25 @@ void JobsList::killAllJobs() {
 }
 
 void CopyCommand::execute() {
-    char c;
+    char buffer[MAXPATHLEN];
     int source, dest;
-    ssize_t count = 1;
+    ssize_t count;
 
     source = open(args[1], O_RDONLY);
     if(source == -1){
         perror("smash error: open failed");
         return;
     }
-    dest = open(args[2], O_WRONLY | O_CREAT | S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    dest = open(args[2], O_WRONLY | O_CREAT , 0644); // mode -rw-r---r--
     if(dest == -1){
         close(source);
         perror("smash error: open failed");
         return;
     }
-    while ((read(source, &c, 1) > 0 && count > 0)){
-        count = write(dest, &c, 1);
+    cout << "smash: " << args[1] << " was copied to " << args[2] << endl;
+    while ((count = read(source, buffer, sizeof(buffer))) != 0){
+        write(dest, buffer, count);
     }
-    std::cout << "smash: " << args[1] << " was copied to " << args[2] << endl;
 }
 /**
  * A function that checks whether a command is a simple one(return false) or complex one(true)

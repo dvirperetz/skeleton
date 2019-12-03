@@ -164,7 +164,7 @@ public:
     void removeJobById(int jobId);
     JobEntry * getLastJob(int* lastJobId);
     JobEntry *getLastStoppedJob(int *jobId);
-    // TODO: Add extra methods or modify exisitng ones as needed
+    int getMaxId();
 };
 class JobsCommand : public BuiltInCommand {
     // TODO: Add your data members

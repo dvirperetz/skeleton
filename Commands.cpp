@@ -188,11 +188,23 @@ void JobsCommand::execute() {
     this->jobs->printJobsList();
 }
 
+int JobsList::getMaxId() {
+    int max = 0;
+    for (auto it = job_list.begin(); it != job_list.end(); it++){
+        if((int)(*it)->getJobID() > max){
+            max = (*it)->getJobID();
+        }
+    }
+    return max;
+}
+
 void JobsList::addJob(Command* cmd, pid_t pid, bool isStopped){
     char* temp = (char*) malloc(strlen(cmd->getCmd()) + 1);
     strcpy(temp, cmd->getCmd());
     JobEntry* new_job = new JobEntry(temp, pid);
     new_job->setIsStopped(isStopped);
+    removeFinishedJobs();
+    job_counter = getMaxId();
     new_job->setJobID(++job_counter);
     this->job_list.push_back(new_job);
 }

@@ -11,7 +11,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5399f80c-240c-49e2-9c5e-90d1f0aebd82" name="Default Changelist" comment="" />
+    <list default="true" id="5399f80c-240c-49e2-9c5e-90d1f0aebd82" name="Default Changelist" comment="CTRLZ isnt working, quit is working">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Commands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Commands.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/signals.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/signals.cpp" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -60,8 +64,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Commands.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="381" selection-start-line="381" selection-end-line="381" />
+            <state relative-caret-position="89">
+              <caret line="548" lean-forward="true" selection-start-line="548" selection-end-line="548" />
               <folding>
                 <element signature="e#436#591#0" />
                 <element signature="e#593#748#0" />
@@ -75,19 +79,17 @@
                 <element signature="e#3615#3944#0" />
                 <element signature="e#3946#5296#0" />
                 <element signature="e#5298#5367#0" />
-                <element signature="e#5369#5433#0" />
                 <element signature="e#5435#5719#0" />
-                <element signature="e#5721#5992#0" />
                 <element signature="e#5994#6616#0" />
                 <element signature="e#6619#7544#0" />
                 <element signature="e#7546#7629#0" />
-                <element signature="e#7631#9080#0" />
                 <element signature="e#9082#9453#0" />
                 <element signature="e#9455#9610#0" />
                 <element signature="e#9613#9867#0" />
                 <element signature="e#9869#10056#0" />
                 <element signature="e#10058#11378#0" />
                 <element signature="e#11379#11755#0" />
+                <element signature="e#11757#12172#0" />
                 <element signature="e#12175#12351#0" />
                 <element signature="e#12353#12956#0" />
                 <element signature="e#12957#13059#0" />
@@ -96,11 +98,9 @@
                 <element signature="e#14035#14862#0" />
                 <element signature="e#15282#15344#0" />
                 <element signature="e#15345#15424#0" />
-                <element signature="e#15425#15487#0" />
                 <element signature="e#15626#15692#0" />
                 <element signature="e#15694#15893#0" />
                 <element signature="e#15895#17019#0" />
-                <element signature="e#16676#16932#0" />
               </folding>
             </state>
           </provider>
@@ -109,8 +109,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Commands.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" column="14" lean-forward="true" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+            <state relative-caret-position="429">
+              <caret line="227" column="10" lean-forward="true" selection-start-line="227" selection-start-column="10" selection-end-line="227" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -118,8 +118,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/signals.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
+            <state relative-caret-position="85">
+              <caret line="14" column="61" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -130,8 +130,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/smash.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="117">
-              <caret line="8" column="37" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
+            <state relative-caret-position="357">
+              <caret line="21" column="3" lean-forward="true" selection-start-line="21" selection-start-column="3" selection-end-line="21" selection-end-column="3" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -150,7 +150,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>backg</find>
       <find>cmd;</find>
       <find>quit</find>
       <find>JobsList</find>
@@ -180,6 +179,7 @@
       <find>vector</find>
       <find>cout</find>
       <find>waitpid</find>
+      <find>finished</find>
     </findStrings>
     <replaceStrings>
       <replace>std::</replace>
@@ -277,7 +277,7 @@
       <workItem from="1575195899531" duration="307000" />
       <workItem from="1575201790301" duration="626000" />
       <workItem from="1575205902087" duration="5800000" />
-      <workItem from="1575216460722" duration="27546000" />
+      <workItem from="1575216460722" duration="34624000" />
     </task>
     <task id="LOCAL-00001" summary="cd">
       <created>1574259246011</created>
@@ -447,11 +447,25 @@
       <option name="project" value="LOCAL" />
       <updated>1575374399170</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="CTRLZ isnt working, quit is working">
+      <created>1575374621165</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1575374621165</updated>
+    </task>
+    <task id="LOCAL-00026" summary="CTRLZ isnt working, quit is working">
+      <created>1575377538350</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1575377538350</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="101419000" />
+    <option name="totallyTimeSpent" value="108497000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -474,7 +488,7 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.2415459" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
-      <window_info anchor="bottom" id="Debug" order="5" sideWeight="0.49924356" weight="0.4605475" />
+      <window_info active="true" anchor="bottom" id="Debug" order="5" sideWeight="0.49924356" visible="true" weight="0.4605475" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32850242" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
       <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.49924356" weight="0.13848631" />
@@ -529,7 +543,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Commands.cpp</url>
-          <line>374</line>
+          <line>375</line>
           <option name="timeStamp" value="29" />
         </line-breakpoint>
       </breakpoints>
@@ -645,13 +659,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/cygwin64/usr/src/debug/cygwin-3.0.6-1/winsup/cygwin/cygtls.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="103">
-          <caret line="39" selection-start-line="39" selection-end-line="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/cygwin64/usr/include/sys/_default_fcntl.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="148">
@@ -659,10 +666,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/smash.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" column="3" lean-forward="true" selection-start-line="21" selection-start-column="3" selection-end-line="21" selection-end-column="3" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/cygwin64/usr/src/debug/cygwin-3.0.6-1/winsup/cygwin/cygtls.cc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="103">
+          <caret line="39" selection-start-line="39" selection-end-line="39" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/signals.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="21" column="5" lean-forward="true" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
+        <state relative-caret-position="85">
+          <caret line="14" column="61" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
@@ -671,25 +695,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Commands.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="14" lean-forward="true" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/smash.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="8" column="37" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="429">
+          <caret line="227" column="10" lean-forward="true" selection-start-line="227" selection-start-column="10" selection-end-line="227" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Commands.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="381" selection-start-line="381" selection-end-line="381" />
+        <state relative-caret-position="89">
+          <caret line="548" lean-forward="true" selection-start-line="548" selection-end-line="548" />
           <folding>
             <element signature="e#436#591#0" />
             <element signature="e#593#748#0" />
@@ -703,19 +717,17 @@
             <element signature="e#3615#3944#0" />
             <element signature="e#3946#5296#0" />
             <element signature="e#5298#5367#0" />
-            <element signature="e#5369#5433#0" />
             <element signature="e#5435#5719#0" />
-            <element signature="e#5721#5992#0" />
             <element signature="e#5994#6616#0" />
             <element signature="e#6619#7544#0" />
             <element signature="e#7546#7629#0" />
-            <element signature="e#7631#9080#0" />
             <element signature="e#9082#9453#0" />
             <element signature="e#9455#9610#0" />
             <element signature="e#9613#9867#0" />
             <element signature="e#9869#10056#0" />
             <element signature="e#10058#11378#0" />
             <element signature="e#11379#11755#0" />
+            <element signature="e#11757#12172#0" />
             <element signature="e#12175#12351#0" />
             <element signature="e#12353#12956#0" />
             <element signature="e#12957#13059#0" />
@@ -724,11 +736,9 @@
             <element signature="e#14035#14862#0" />
             <element signature="e#15282#15344#0" />
             <element signature="e#15345#15424#0" />
-            <element signature="e#15425#15487#0" />
             <element signature="e#15626#15692#0" />
             <element signature="e#15694#15893#0" />
             <element signature="e#15895#17019#0" />
-            <element signature="e#16676#16932#0" />
           </folding>
         </state>
       </provider>

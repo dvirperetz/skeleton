@@ -550,6 +550,7 @@ void SmallShell::executeCommand(const char *cmd_line) {
     history->addRecord(cmd_line);
     cmd->execute();
     this->fg_pid = -1;
+    this->jobs->removeFinishedJobs();
 
 }
 // Please note that you must fork smash process for some commands (e.g., external commands....)

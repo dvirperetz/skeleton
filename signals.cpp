@@ -11,11 +11,8 @@ void ctrlZHandler(int sig_num) {
     cout << "smash: got ctrl-Z" << endl;
     JobsList* jobs_ptr = SmallShell::getInstance().getJobsList();
     Command* cur_cmd = SmallShell::getInstance().getCurCmd();
-    if(cur_cmd == nullptr){
-        return;
-    }
-    jobs_ptr->addJob(cur_cmd,SmallShell::getInstance().getFgPid(), true); // add a stopped job to the jobslist
     if( SmallShell::getInstance().getFgPid() != -1) {// there is a process in the fg
+        jobs_ptr->addJob(cur_cmd,SmallShell::getInstance().getFgPid(), true); // add a stopped job to the jobslist
         if (kill(SmallShell::getInstance().getFgPid(), 19) == -1) {
             perror("smash error: kill failed");
             return;
@@ -28,9 +25,9 @@ void ctrlZHandler(int sig_num) {
 
 void ctrlCHandler(int sig_num) {
   // TODO: Add your implementation
-    cout << "smash: got ctrl-Z" << endl;
+    cout << "smash: got ctrl-C" << endl;
     if( SmallShell::getInstance().getFgPid() != -1) {// there is a process in the fg
-        if (kill(getpid(), SIGINT) == -1) {
+        if (kill(SmallShell::getInstance().getFgPid(), SIGINT) == -1) {
             perror("smash error: kill failed");
             return;
         }

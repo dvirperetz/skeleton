@@ -11,13 +11,14 @@ void ctrlZHandler(int sig_num) {
     cout << "smash: got ctrl-Z" << endl;
     JobsList* jobs_ptr = SmallShell::getInstance().getJobsList();
     Command* cur_cmd = SmallShell::getInstance().getCurCmd();
-    if( SmallShell::getInstance().getFgPid() != -1) {// there is a process in the fg
-        jobs_ptr->addJob(cur_cmd,SmallShell::getInstance().getFgPid(), true); // add a stopped job to the jobslist
-        if (kill(SmallShell::getInstance().getFgPid(), 19) == -1) {
+    int fg_job_pid = SmallShell::getInstance().getFgPid();
+    if( fg_job_pid != -1) {// there is a process in the fg
+        jobs_ptr->addJob(cur_cmd,fg_job_pid, true); // add a stopped job to the jobslist
+        if (kill(fg_job_pid, 19) == -1) {
             perror("smash error: kill failed");
             return;
         }
-        cout << "smash: process " << SmallShell::getInstance().getFgPid()
+        cout << "smash: process " << fg_job_pid
                 << " was stopped" << endl;
     }
 

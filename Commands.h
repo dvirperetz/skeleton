@@ -190,9 +190,11 @@ public:
 class ForegroundCommand : public BuiltInCommand {
     // TODO: Add your data members
     JobsList* fgJobList;
+    char* text_of_cmd_brought_to_fg;
 public:
     ForegroundCommand(const char* cmd_line, JobsList* jobs) :
-            BuiltInCommand(cmd_line), fgJobList(jobs){};
+            BuiltInCommand(cmd_line), fgJobList(jobs) , text_of_cmd_brought_to_fg(
+            nullptr){} ;
     virtual ~ForegroundCommand() = default;
     void execute() override;
 };

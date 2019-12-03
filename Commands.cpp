@@ -192,6 +192,7 @@ void JobsList::addJob(Command* cmd, pid_t pid, bool isStopped){
     char* temp = (char*) malloc(strlen(cmd->getCmd()) + 1);
     strcpy(temp, cmd->getCmd());
     JobEntry* new_job = new JobEntry(temp, pid);
+    new_job->setIsStopped(isStopped);
     new_job->setJobID(++job_counter);
     this->job_list.push_back(new_job);
 }
@@ -212,6 +213,7 @@ void JobsList::removeFinishedJobs() {
 void JobsList::printJobsList(){
     removeFinishedJobs();
     for(auto & it : this->job_list) {
+        // the printing:
         // the printing:
         if(!it->getIsStopped()){
             cout << it->getJobID() << " " << it->getCMD() << " : " <<
@@ -275,18 +277,18 @@ void ForegroundCommand::execute() {
              " does not exist" << endl;
         return;
     }
-    else if (args[1] != nullptr){
+    else if (args[1] != nullptr){ // case: we got and jobid with the fg command
         job_id = strtol(args[1], nullptr,0);
         cout << fgJobList->getJobById(job_id)->getCMD() << " : " <<
              fgJobList->getJobById(job_id)->getPID() << endl;
     }
-    else{ // case: no args and joblist isnt empty
+    else{ // case: no args (and the joblist isnt empty)
         cout << fgJobList->getLastJob(nullptr)->getCMD() << " : " <<
              fgJobList->getLastJob(nullptr)->getPID() << endl;
         job_id = fgJobList->getLastJob(nullptr)->getJobID();
     }
 
-    if(kill(fgJobList->getJobById(job_id)->getPID(), SIGCONT) == -1){
+    if(kill(fgJobList->getJobById(job_id)->getPID(), SIGCONT) == -1){ // send signal to move the job to run in the fg
         perror("smash error: kill failed");
     }
     int child_pid = fgJobList->getJobById(job_id)->getPID();
@@ -335,17 +337,21 @@ void BackgroundCommand::execute() {
     int job_id;
     if(args[1] == nullptr && (bgJobList->getLastStoppedJob(nullptr) == nullptr)){
         cout << "smash error: bg: there is no stopped jobs to resume" << endl;
+        return;
     }
     else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0)) == 0){
         cout << "smash error: bg: invalid arguments" << endl;
+        return;
     }
     else if(args[1] && bgJobList->getJobById(strtol(args[1], nullptr,0)) == nullptr){
         cout << "smash error: bg: job-id " << strtol(args[1], nullptr,0) <<
              " does not exist" << endl;
+        return;
     }
     else if (args[1] && bgJobList->getJobById(strtol(args[1], nullptr,0))->getIsStopped() == 0 ) {// case: job exist but not stopped
         cout << "smash error: bg: job-id " << strtol(args[1], nullptr,0) <<
              " is already running in the background" << endl;
+        return;
     }
     else if ( args[1] == nullptr ){ // case : execute on the last stopped job
         job_id = bgJobList->getLastStoppedJob(nullptr)->getJobID();
@@ -355,14 +361,13 @@ void BackgroundCommand::execute() {
     }
     cout <<  bgJobList->getJobById(job_id)->getCMD() << " : " <<
          bgJobList->getJobById(job_id)->getPID() << endl;
-    kill(bgJobList->getJobById(job_id)->getPID(), SIGCONT);
+    kill(bgJobList->getJobById(job_id)->getPID(), 18); // send signal SIGCONT
     bgJobList->getJobById(job_id)->setIsStopped(false);
-
 }
 
 JobsList::JobEntry* JobsList::getLastStoppedJob(int *jobId) {
     for (vector<JobEntry*>::reverse_iterator i = job_list.rbegin(); i!= job_list.rend(); ++i){
-        if ( (*i)->getIsStopped() ){
+        if ( (*i) && (*i)->getIsStopped() ){
             if( jobId!= nullptr){
                 *jobId = (*i)->getJobID();
             }

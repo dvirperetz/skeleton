@@ -245,7 +245,7 @@ void JobsList::printJobsList(){
 void KillCommand::execute() {
     //  make sure the kill command comes with exactly 2 arguments, no less
     //  and no more.
-
+    SmallShell::getInstance().getJobsList()->removeFinishedJobs();
     if(this->args[1] == nullptr || this->args[2] == nullptr ||
        this->args[3] != nullptr){
         cout << "smash error: kill: invalid arguments" << endl;
@@ -275,6 +275,7 @@ void ShowPidCommand::execute() {
 }
 
 void ForegroundCommand::execute() {
+    SmallShell::getInstance().getJobsList()->removeFinishedJobs();
     int job_id = 0;
     if(args[1] == nullptr && fgJobList->job_list.empty()){
         cout << "smash error: fg: jobs list is empty" << endl;
@@ -346,6 +347,7 @@ JobsList::JobEntry* JobsList::getLastJob(int *lastJobId) {
 }
 
 void BackgroundCommand::execute() {
+    SmallShell::getInstance().getJobsList()->removeFinishedJobs();
     int job_id;
     if(args[1] == nullptr && (bgJobList->getLastStoppedJob(nullptr) == nullptr)){
         cout << "smash error: bg: there is no stopped jobs to resume" << endl;
@@ -390,6 +392,7 @@ JobsList::JobEntry* JobsList::getLastStoppedJob(int *jobId) {
 }
 
 void QuitCommand::execute() {
+    SmallShell::getInstance().getJobsList()->removeFinishedJobs();
     if(args[1] && strcmp(args[1], "kill") == 0){
         cout << "smash: sending SIGKILL signal to " << qJobs->job_list.size() << " jobs:" << endl;
         for(vector<JobsList::JobEntry*>::iterator it = qJobs->job_list.begin(); it != qJobs->job_list.end(); it++){

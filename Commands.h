@@ -227,6 +227,7 @@ private:
     JobsList* jobs;
     pid_t fg_pid;
     Command* cur_cmd;
+    int curr_fg_job_id;
     SmallShell();
 public:
     Command *CreateCommand(const char* cmd_line);
@@ -248,7 +249,7 @@ public:
     void SetFgPid(pid_t pid){this->fg_pid = pid;};
     void setLastPath(char* path);
     char* getLastPath(){return last_path;};
-
+    void setFgJobId(int id){this->curr_fg_job_id;};
 };
 
 #endif //SMASH_COMMAND_H_

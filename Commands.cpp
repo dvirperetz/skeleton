@@ -372,7 +372,7 @@ JobsList::JobEntry* JobsList::getLastStoppedJob(int *jobId) {
 }
 
 void QuitCommand::execute() {
-    if(strcmp(args[1], "kill") == 0){
+    if(args[1] && strcmp(args[1], "kill") == 0){
         cout << "smash: sending SIGKILL signal to " << qJobs->job_list.size() << " jobs:" << endl;
         for(vector<JobsList::JobEntry*>::iterator it = qJobs->job_list.begin(); it != qJobs->job_list.end(); it++){
             cout << (*it)->getPID() << ": " << (*it)->getCMD() << endl;

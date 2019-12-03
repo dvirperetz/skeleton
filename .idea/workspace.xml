@@ -11,10 +11,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5399f80c-240c-49e2-9c5e-90d1f0aebd82" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Commands.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Commands.cpp" afterDir="false" />
-    </list>
+    <list default="true" id="5399f80c-240c-49e2-9c5e-90d1f0aebd82" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -63,8 +60,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Commands.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="380" column="5" lean-forward="true" selection-start-line="380" selection-start-column="5" selection-end-line="380" selection-end-column="5" />
+            <state relative-caret-position="221">
+              <caret line="381" selection-start-line="381" selection-end-line="381" />
               <folding>
                 <element signature="e#436#591#0" />
                 <element signature="e#593#748#0" />
@@ -280,7 +277,7 @@
       <workItem from="1575195899531" duration="307000" />
       <workItem from="1575201790301" duration="626000" />
       <workItem from="1575205902087" duration="5800000" />
-      <workItem from="1575216460722" duration="27256000" />
+      <workItem from="1575216460722" duration="27546000" />
     </task>
     <task id="LOCAL-00001" summary="cd">
       <created>1574259246011</created>
@@ -436,11 +433,25 @@
       <option name="project" value="LOCAL" />
       <updated>1575370286486</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="CTRLZ isnt working, quit is working">
+      <created>1575374259541</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1575374259541</updated>
+    </task>
+    <task id="LOCAL-00024" summary="CTRLZ isnt working, quit is working">
+      <created>1575374399170</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1575374399170</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="101129000" />
+    <option name="totallyTimeSpent" value="101419000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -463,7 +474,7 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.2415459" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
-      <window_info active="true" anchor="bottom" id="Debug" order="5" sideWeight="0.49924356" visible="true" weight="0.4605475" />
+      <window_info anchor="bottom" id="Debug" order="5" sideWeight="0.49924356" weight="0.4605475" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32850242" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
       <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.49924356" weight="0.13848631" />
@@ -510,7 +521,8 @@
     <MESSAGE value="fg is working" />
     <MESSAGE value="CTRLZ isnt working" />
     <MESSAGE value="CTRLZ isnt working, cp is tested" />
-    <option name="LAST_COMMIT_MESSAGE" value="CTRLZ isnt working, cp is tested" />
+    <MESSAGE value="CTRLZ isnt working, quit is working" />
+    <option name="LAST_COMMIT_MESSAGE" value="CTRLZ isnt working, quit is working" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -676,8 +688,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Commands.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="380" column="5" lean-forward="true" selection-start-line="380" selection-start-column="5" selection-end-line="380" selection-end-column="5" />
+        <state relative-caret-position="221">
+          <caret line="381" selection-start-line="381" selection-end-line="381" />
           <folding>
             <element signature="e#436#591#0" />
             <element signature="e#593#748#0" />

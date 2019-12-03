@@ -11,6 +11,9 @@ void ctrlZHandler(int sig_num) {
     cout << "smash: got ctrl-Z" << endl;
     JobsList* jobs_ptr = SmallShell::getInstance().getJobsList();
     Command* cur_cmd = SmallShell::getInstance().getCurCmd();
+    if(cur_cmd == nullptr){
+        return;
+    }
     jobs_ptr->addJob(cur_cmd,SmallShell::getInstance().getFgPid(), true); // add a stopped job to the jobslist
     if( SmallShell::getInstance().getFgPid() != -1) {// there is a process in the fg
         if (kill(SmallShell::getInstance().getFgPid(), 19) == -1) {

@@ -336,14 +336,14 @@ void BackgroundCommand::execute() {
     if(args[1] == nullptr && (bgJobList->getLastStoppedJob(nullptr) == nullptr)){
         cout << "smash error: bg: there is no stopped jobs to resume" << endl;
     }
-    else if (args[2] != nullptr || strtol(args[1], nullptr,0) == 0){
+    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0)) == 0){
         cout << "smash error: bg: invalid arguments" << endl;
     }
-    else if(bgJobList->getJobById(strtol(args[1], nullptr,0)) == nullptr){
+    else if(args[1] && bgJobList->getJobById(strtol(args[1], nullptr,0)) == nullptr){
         cout << "smash error: bg: job-id " << strtol(args[1], nullptr,0) <<
              " does not exist" << endl;
     }
-    else if ( bgJobList->getJobById(strtol(args[1], nullptr,0))->getIsStopped() == 0 ) {// case: job exist but not stopped
+    else if (args[1] && bgJobList->getJobById(strtol(args[1], nullptr,0))->getIsStopped() == 0 ) {// case: job exist but not stopped
         cout << "smash error: bg: job-id " << strtol(args[1], nullptr,0) <<
              " is already running in the background" << endl;
     }
@@ -359,6 +359,7 @@ void BackgroundCommand::execute() {
     bgJobList->getJobById(job_id)->setIsStopped(false);
 
 }
+
 JobsList::JobEntry* JobsList::getLastStoppedJob(int *jobId) {
     for (vector<JobEntry*>::reverse_iterator i = job_list.rbegin(); i!= job_list.rend(); ++i){
         if ( (*i)->getIsStopped() ){
@@ -482,7 +483,7 @@ Command* SmallShell::getCurCmd() {
 
 SmallShell::SmallShell() :
     last_path(nullptr), history(new CommandsHistory()),
-    jobs(new JobsList()), fg_pid(-1), cur_cmd() {}
+    jobs(new JobsList()), fg_pid(-1), cur_cmd(nullptr) {}
 
 
 SmallShell::~SmallShell() {

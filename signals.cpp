@@ -13,7 +13,7 @@ void ctrlZHandler(int sig_num) {
     Command* cur_cmd = SmallShell::getInstance().getCurCmd();
     int fg_job_pid = SmallShell::getInstance().getFgPid();
     if( fg_job_pid != -1) {// there is a process in the fg
-        jobs_ptr->addJob(cur_cmd,fg_job_pid, true); // add a stopped job to the jobslist
+        jobs_ptr->addJob(cur_cmd,fg_job_pid,SmallShell::getInstance().getCurFgJobId() ,true ); // add a stopped job to the jobslist
         if (kill(fg_job_pid, 19) == -1) {
             perror("smash error: kill failed");
             return;

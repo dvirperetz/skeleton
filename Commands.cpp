@@ -198,14 +198,21 @@ int JobsList::getMaxId() {
     return max;
 }
 
-void JobsList::addJob(Command* cmd, pid_t pid, bool isStopped){
+void JobsList::addJob(Command* cmd, pid_t pid,int fg_job_id, bool isStopped){
     char* temp = (char*) malloc(strlen(cmd->getCmd()) + 1);
     strcpy(temp, cmd->getCmd());
     JobEntry* new_job = new JobEntry(temp, pid);
     new_job->setIsStopped(isStopped);
     removeFinishedJobs();
     job_counter = getMaxId();
-    new_job->setJobID(++job_counter);
+    if( fg_job_id == 0){ // case : its a new job, so assign max id+1
+        new_job->setJobID(++job_counter);
+        } else{ // case : its an old job so we recover its id
+        new_job->setJobID(fg_job_id);
+        if( fg_job_id > (int) job_counter){
+            job_counter = fg_job_id;
+        }
+    }
     this->job_list.push_back(new_job);
 }
 
@@ -300,7 +307,9 @@ void ForegroundCommand::execute() {
              fgJobList->getLastJob(nullptr)->getPID() << endl;
         job_id = fgJobList->getLastJob(nullptr)->getJobID();
     }
-
+    Command* new_cmd = SmallShell::getInstance().CreateCommand(fgJobList->getJobById(job_id)->getCMD());
+    SmallShell::getInstance().SetCurCmd(new_cmd);
+    SmallShell::getInstance().setFgJobId(job_id);
     if(kill(fgJobList->getJobById(job_id)->getPID(), SIGCONT) == -1){ // send signal to move the job to run in the fg
         perror("smash error: kill failed");
     }
@@ -483,7 +492,7 @@ void ExternalCommand::execute() {
             SmallShell::getInstance().SetFgPid(pid); // updating the smash member : Foreground pid
             waitpid(pid,&status,WUNTRACED);
         } else{ //it's a background command
-            SmallShell::getInstance().getJobsList()->addJob(this,pid, false);
+            SmallShell::getInstance().getJobsList()->addJob(this,pid, 0,false);
         }
         return;
     }
@@ -503,7 +512,7 @@ Command* SmallShell::getCurCmd() {
 
 SmallShell::SmallShell() :
     last_path(nullptr), history(new CommandsHistory()),
-    jobs(new JobsList()), fg_pid(-1), cur_cmd(nullptr) {}
+    jobs(new JobsList()), fg_pid(-1), cur_cmd(nullptr) , curr_fg_job_id(0){}
 
 
 SmallShell::~SmallShell() {
@@ -570,6 +579,7 @@ void SmallShell::executeCommand(const char *cmd_line) {
     history->addRecord(cmd_line);
     cmd->execute();
     this->fg_pid = -1;
+    this->curr_fg_job_id = 0;
     this->jobs->removeFinishedJobs();
 
 }

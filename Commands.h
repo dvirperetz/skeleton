@@ -156,7 +156,7 @@ public:
     ~JobsList(){
       job_list.clear();
     };
-    void addJob(Command* cmd,pid_t pid, bool isStopped = false);
+    void addJob(Command* cmd,pid_t pid, int fg_job_id = 0, bool isStopped = false);
     void printJobsList();
     void killAllJobs();
     void removeFinishedJobs();
@@ -190,11 +190,9 @@ public:
 class ForegroundCommand : public BuiltInCommand {
     // TODO: Add your data members
     JobsList* fgJobList;
-    char* text_of_cmd_brought_to_fg;
 public:
     ForegroundCommand(const char* cmd_line, JobsList* jobs) :
-            BuiltInCommand(cmd_line), fgJobList(jobs) , text_of_cmd_brought_to_fg(
-            nullptr){} ;
+            BuiltInCommand(cmd_line), fgJobList(jobs){} ;
     virtual ~ForegroundCommand() = default;
     void execute() override;
 };
@@ -249,7 +247,9 @@ public:
     void SetFgPid(pid_t pid){this->fg_pid = pid;};
     void setLastPath(char* path);
     char* getLastPath(){return last_path;};
-    void setFgJobId(int id){this->curr_fg_job_id;};
+    void setFgJobId(int id){this->curr_fg_job_id = id;};
+    void SetCurCmd ( Command * new_cur_cmd){this->cur_cmd = new_cur_cmd;};
+    int getCurFgJobId(){ return this->curr_fg_job_id;};
 };
 
 #endif //SMASH_COMMAND_H_

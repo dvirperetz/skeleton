@@ -477,7 +477,7 @@ void ExternalCommand::execute() {
         std::copy(str.begin(), str.end(), writable);
         writable[str.size()] = '\0';
         _removeBackgroundSign(writable);
-        char *extern_args[4] = {(char*) "/bin/bash", (char*) "-c", writable, nullptr};
+        char *extern_args[4] = {(char*) "bash", (char*) "-c", writable, nullptr};
         if (execv("/bin/bash", extern_args) == -1 ){
             perror("smash error: execv failed");
         }
@@ -542,37 +542,36 @@ void SmallShell::setLastPath(char* path){
 }
 
 Command * SmallShell::CreateCommand(const char* cmd_line) {
-
-    string cmd_s = string(cmd_line);
-    cmd_s = _ltrim(cmd_s);
-    if (cmd_s.find("pwd ") == 0) {
+    char* args[COMMAND_MAX_ARGS];
+    _parseCommandLine(cmd_line,args);
+    if (strcmp(args[0], "pwd") == 0) {
         return new GetCurrDirCommand(cmd_line);
     }
-    else if (cmd_s.find("cd") == 0){
+    else if (strcmp(args[0], "cd") == 0){
         return new ChangeDirCommand(cmd_line, &last_path);
     }
-    else if (cmd_s.find("history") == 0){
+    else if (strcmp(args[0], "history") == 0){
         return new HistoryCommand(cmd_line, history);
     }
-    else if(cmd_s.find("jobs") == 0){
+    else if(strcmp(args[0], "jobs") == 0){
         return new JobsCommand(cmd_line, jobs);
     }
-    else if (cmd_s.find("kill") == 0){
+    else if (strcmp(args[0], "kill") == 0){
         return new KillCommand(cmd_line, jobs);
     }
-    else if (cmd_s.find("showpid") == 0){
+    else if (strcmp(args[0], "showpid") == 0){
         return new ShowPidCommand(cmd_line);
     }
-    else if (cmd_s.find("fg") == 0){
+    else if (strcmp(args[0], "fg") == 0){
         return new ForegroundCommand(cmd_line, jobs);
     }
-    else if (cmd_s.find("bg") == 0){
+    else if (strcmp(args[0], "bg") == 0){
         return new BackgroundCommand(cmd_line, jobs);
     }
-    else if (cmd_s.find("quit") == 0){
+    else if (strcmp(args[0], "quit") == 0){
         return new QuitCommand(cmd_line, jobs);
     }
-    else if (cmd_s.find("cp") == 0){
+    else if (strcmp(args[0], "cp") == 0){
         return new CopyCommand(cmd_line);
     }
     else {

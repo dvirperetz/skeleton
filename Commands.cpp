@@ -5,6 +5,7 @@
 #include <sstream>
 #include <sys/wait.h>
 #include <iomanip>
+#include <algorithm>
 #include "Commands.h"
 #include "fcntl.h"
 
@@ -26,6 +27,7 @@ using std::endl;
 using std::vector;
 using std::right;
 using std::setw;
+
 
 const std::string WHITESPACE = " \n\r\t\f\v";
 string _ltrim(const std::string& s)
@@ -109,7 +111,7 @@ void ChangeDirCommand::execute() {
     }
     // cd -
     else if(strcmp(this->args[1], "-") == 0){
-        if(!plastPwd){
+        if((*plastPwd) == nullptr){
             cout << "smash error: cd: OLDPWD not set" << endl;
         } else{
             if(chdir(*plastPwd) == -1){
@@ -188,7 +190,7 @@ void JobsCommand::execute() {
     this->jobs->printJobsList();
 }
 
-int JobsList::getMaxId() {
+int JobsList::getMaxId() const {
     int max = 0;
     for (auto it = job_list.begin(); it != job_list.end(); it++){
         if((int)(*it)->getJobID() > max){
@@ -229,18 +231,20 @@ void JobsList::removeFinishedJobs() {
     }
 }
 
+
 void JobsList::printJobsList(){
     removeFinishedJobs();
+    std::sort(job_list.begin(), job_list.end());
     for(auto & it : this->job_list) {
         // the printing:
         // the printing:
         if(!it->getIsStopped()){
-            cout << it->getJobID() << " " << it->getCMD() << " : " <<
+            cout << "[" << it->getJobID() << "] " << it->getCMD() << " : " <<
                  it->getPID() << " " <<
                  (difftime(time(nullptr), it->getCreatedTime() )) <<
                  " secs" << endl;
         }else{
-            cout << it->getJobID() << " " << it->getCMD() << " : " <<
+            cout << "[" << it->getJobID() << "] " << it->getCMD() << " : " <<
                  it->getPID() << " " <<
                  (difftime(time(nullptr), it->getCreatedTime() )) <<
                  " secs (stopped)" << endl;
@@ -248,13 +252,21 @@ void JobsList::printJobsList(){
     }
 }
 
+static bool is_number(const char* c){
+    for(unsigned int i = 0; i < strlen(c); i++){
+        if(!isdigit(c[i])){
+            return false;
+        }
+    }
+    return true;
+}
 
 void KillCommand::execute() {
     //  make sure the kill command comes with exactly 2 arguments, no less
     //  and no more.
     SmallShell::getInstance().getJobsList()->removeFinishedJobs();
     if(this->args[1] == nullptr || this->args[2] == nullptr ||
-       this->args[3] != nullptr){
+       this->args[3] != nullptr || !(is_number(this->args[2]))){
         cout << "smash error: kill: invalid arguments" << endl;
         return;
     }
@@ -288,7 +300,7 @@ void ForegroundCommand::execute() {
         cout << "smash error: fg: jobs list is empty" << endl;
         return;
     }
-    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0) == 0)){
+    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0) < MIN_JOB_ID)){
         cout << "smash error: fg: invalid arguments" << endl;
         return;
     }
@@ -362,7 +374,7 @@ void BackgroundCommand::execute() {
         cout << "smash error: bg: there is no stopped jobs to resume" << endl;
         return;
     }
-    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0)== 0)){
+    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0) < 1)){
         cout << "smash error: bg: invalid arguments" << endl;
         return;
     }
@@ -532,7 +544,8 @@ void SmallShell::setLastPath(char* path){
 Command * SmallShell::CreateCommand(const char* cmd_line) {
 
     string cmd_s = string(cmd_line);
-    if (cmd_s.find("pwd") == 0) {
+    cmd_s = _ltrim(cmd_s);
+    if (cmd_s.find("pwd ") == 0) {
         return new GetCurrDirCommand(cmd_line);
     }
     else if (cmd_s.find("cd") == 0){

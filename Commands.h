@@ -8,6 +8,7 @@
 #define HISTORY_MAX_RECORDS (50)
 #define MAXPATHLEN (4096)
 #define MAX_HISTORY_SIZE (50)
+#define MIN_JOB_ID (1)
 
 
 class Command {
@@ -148,6 +149,9 @@ public:
         unsigned long getCreatedTime(){return created_time;};
         bool getIsStopped(){return isStopped;};
         void setIsStopped(bool b){this->isStopped=b;};
+        bool operator< (const JobEntry& job) const{
+            return (job_id < job.job_id);
+        }
     };
     // TODO: Add your data members
     unsigned int job_counter;
@@ -164,7 +168,8 @@ public:
     void removeJobById(int jobId);
     JobEntry * getLastJob(int* lastJobId);
     JobEntry *getLastStoppedJob(int *jobId);
-    int getMaxId();
+    int getMaxId() const;
+
 };
 class JobsCommand : public BuiltInCommand {
     // TODO: Add your data members

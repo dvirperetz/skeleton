@@ -598,32 +598,39 @@ void SmallShell::executeCommand(const char *cmd_line) {
     // for example:
     history->addRecord(cmd_line);
     string cmd_s = (string)cmd_line; // etai :
-    if( cmd_s.find("|") == 0 ){
-        string cmd_s = (string)cmd_line; // etai :
-        const char* first_cmd_line = strchr(cmd_line,'|');
-        string first_cmd_line_s= (string)first_cmd_line;
+
+
+
+
+
+    //
+    if( (int) cmd_s.find("|") > 0 ){
+      //  string cmd_s = (string)cmd_line; // etai :
+        string first_cmd_line_s= cmd_s.substr(0,cmd_s.find("|",0));
+        const char* first_cmd_line = first_cmd_line_s.c_str();
         string second_cmd_s = cmd_s.substr(cmd_s.find("|") + 1 );
+        cout << " first cmd is :\"" << first_cmd_line_s  << "\"" << endl;
+        cout << " second cmd is :\"" << second_cmd_s << "\"" <<endl;
         const char* second_cmd_line = second_cmd_s.c_str();
         Command* first_cmd = CreateCommand(first_cmd_line);
         Command* second_cmd = CreateCommand(second_cmd_line);
-        close(1);
         int my_pipe[2];
         pipe ( my_pipe );
         int pid;
         pid = fork();
         if ( pid == 0){
-            close(my_pipe[1]);
+            dup2(my_pipe[1],1);
+            this->cur_cmd = first_cmd;
+            first_cmd->execute();
+            abort();
+        } else{
             dup2(my_pipe[0],0);
+            close(my_pipe[1]);
             this->cur_cmd = second_cmd;
             second_cmd->execute();
-        } else{
-
-            close(my_pipe[0]);
-            dup2(my_pipe[1],1);
-              first_cmd->execute();
-              this->fg_pid = -1;
-              this->curr_fg_job_id = 0;
-              this->jobs->removeFinishedJobs();
+            this->fg_pid = -1;
+            this->curr_fg_job_id = 0;
+            this->jobs->removeFinishedJobs();
         }
     }else {
         Command *cmd = CreateCommand(cmd_line); // example

@@ -148,9 +148,15 @@ void ChangeDirCommand::execute() {
 }
 
 void CommandsHistory::addRecord(const char* cmd_line){
+    CommandHistoryEntry* last_entry = history_list[(cmd_count-1)%50];
+    if(last_entry && strcmp(cmd_line, last_entry->getCmdText()) == 0){
+        last_entry->incTimeStamp();
+        return;
+    }
     char* temp = (char*) malloc(strlen(cmd_line) + 1);
     strcpy(temp, cmd_line);
-    CommandHistoryEntry* entry = new CommandHistoryEntry(temp, cmd_count);
+    int new_timestamp = last_entry ? last_entry->getTimeStamp() : 0;
+    CommandHistoryEntry* entry = new CommandHistoryEntry(temp, new_timestamp);
     cmd_count++;
     free(this->history_list[(cmd_count-1)%50]);
     this->history_list[(cmd_count-1)%50] = entry;
@@ -160,9 +166,9 @@ void CommandsHistory::printHistory() {
     if(cmd_count <= MAX_HISTORY_SIZE){
         for(unsigned int i = 0; i < cmd_count; i++){
             //  don't print duplicates
-            if(i < (MAX_HISTORY_SIZE-1) && history_list[(i+1)] && !strcmp(history_list[i]->getCmdText(),history_list[(i+1)]->getCmdText())){
+            /*if(i < (MAX_HISTORY_SIZE-1) && history_list[(i+1)] && !strcmp(history_list[i]->getCmdText(),history_list[(i+1)]->getCmdText())){
                 continue;
-            }
+            }*/
 
             cout << right << setw(5) << history_list[i]->getTimeStamp()
                  << "  " << history_list[i]->getCmdText()  << endl;
@@ -170,18 +176,18 @@ void CommandsHistory::printHistory() {
     } else{
         int pivot = cmd_count%MAX_HISTORY_SIZE;
         for(int i = pivot; i < MAX_HISTORY_SIZE; i++){
-            if(i < (MAX_HISTORY_SIZE) && history_list[(i+1)%MAX_HISTORY_SIZE] && !strcmp(history_list[i]->getCmdText(),history_list[(i+1)%MAX_HISTORY_SIZE]->getCmdText())){
+            /*if(i < (MAX_HISTORY_SIZE) && history_list[(i+1)%MAX_HISTORY_SIZE] && !strcmp(history_list[i]->getCmdText(),history_list[(i+1)%MAX_HISTORY_SIZE]->getCmdText())){
                 continue;
-            }
+            }*/
             cout << right << setw(5) << history_list[i]->getTimeStamp()
-                 << " " << history_list[i]->getCmdText() << endl;
+                 << "  " << history_list[i]->getCmdText() << endl;
         }
         for(int i = 0; i < pivot; i++){
-            if(i < (MAX_HISTORY_SIZE-1) && history_list[i+1] && !strcmp(history_list[i]->getCmdText(),history_list[i+1]->getCmdText())){
+            /*if(i < (MAX_HISTORY_SIZE-1) && history_list[i+1] && !strcmp(history_list[i]->getCmdText(),history_list[i+1]->getCmdText())){
                 continue;
-            }
+            }*/
             cout << right << setw(5) << history_list[i]->getTimeStamp()
-                 << " " << history_list[i]->getCmdText() << endl;
+                 << "  " << history_list[i]->getCmdText() << endl;
         }
     }
 

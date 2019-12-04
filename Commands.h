@@ -105,13 +105,13 @@ public:
         ~CommandHistoryEntry() = default;
         const char* getCmdText(){return cmd_text;};
         unsigned int getTimeStamp(){return timestamp;};
+        void incTimeStamp(){timestamp++;};
+
     };
     // TODO: Add your data member
     CommandHistoryEntry* history_list[MAX_HISTORY_SIZE];
     unsigned int cmd_count;
-    CommandsHistory() : history_list(){
-        cmd_count = 0;
-    };
+    CommandsHistory() : history_list(), cmd_count(0){};
     ~CommandsHistory() {
         for(int i=0; i< MAX_HISTORY_SIZE; ++i){
             delete history_list[i];

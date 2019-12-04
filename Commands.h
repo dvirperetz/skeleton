@@ -8,6 +8,7 @@
 #define HISTORY_MAX_RECORDS (50)
 #define MAXPATHLEN (4096)
 #define MAX_HISTORY_SIZE (50)
+#define COMMAND_LINE_MAX_SIZE (80) // etai
 #define MIN_JOB_ID (1)
 
 
@@ -169,7 +170,7 @@ public:
     JobEntry * getLastJob(int* lastJobId);
     JobEntry *getLastStoppedJob(int *jobId);
     int getMaxId() const;
-
+  //  bool sortByJobID( JobEntry* first, JobEntry* second);
 };
 class JobsCommand : public BuiltInCommand {
     // TODO: Add your data members

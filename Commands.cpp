@@ -68,6 +68,11 @@ bool _isBackgroundComamnd(const char* cmd_line) {
     return str[str.find_last_not_of(whitespace)] == '&';
 }
 
+bool sortByJobID(class JobsList::JobEntry * first, class JobsList::JobEntry * second) {
+    return (first->getJobID() < second->getJobID()) ;
+}
+
+
 void _removeBackgroundSign(char* cmd_line) {
     const string whitespace = " \t\n";
     const string str(cmd_line);
@@ -234,7 +239,7 @@ void JobsList::removeFinishedJobs() {
 
 void JobsList::printJobsList(){
     removeFinishedJobs();
-    std::sort(job_list.begin(), job_list.end());
+    std::sort(job_list.begin(), job_list.end(),sortByJobID);
     for(auto & it : this->job_list) {
         // the printing:
         // the printing:
@@ -374,7 +379,7 @@ void BackgroundCommand::execute() {
         cout << "smash error: bg: there is no stopped jobs to resume" << endl;
         return;
     }
-    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0) < 1)){
+    else if (args[2] != nullptr || (args[1] && strtol(args[1], nullptr,0)== 0)){
         cout << "smash error: bg: invalid arguments" << endl;
         return;
     }
@@ -477,7 +482,7 @@ void ExternalCommand::execute() {
         std::copy(str.begin(), str.end(), writable);
         writable[str.size()] = '\0';
         _removeBackgroundSign(writable);
-        char *extern_args[4] = {(char*) "bash", (char*) "-c", writable, nullptr};
+        char *extern_args[4] = {(char*) "/bin/bash", (char*) "-c", writable, nullptr};
         if (execv("/bin/bash", extern_args) == -1 ){
             perror("smash error: execv failed");
         }
@@ -585,15 +590,43 @@ Command * SmallShell::CreateCommand(const char* cmd_line) {
 void SmallShell::executeCommand(const char *cmd_line) {
     // TODO: Add your implementation here
     // for example:
-    Command* cmd = CreateCommand(cmd_line); // example
-    this->cur_cmd = cmd;
-
     history->addRecord(cmd_line);
-    cmd->execute();
-    this->fg_pid = -1;
-    this->curr_fg_job_id = 0;
-    this->jobs->removeFinishedJobs();
+    string cmd_s = (string)cmd_line; // etai :
+    if( cmd_s.find("|") == 0 ){
+        string cmd_s = (string)cmd_line; // etai :
+        const char* first_cmd_line = strchr(cmd_line,'|');
+        string first_cmd_line_s= (string)first_cmd_line;
+        string second_cmd_s = cmd_s.substr(cmd_s.find("|") + 1 );
+        const char* second_cmd_line = second_cmd_s.c_str();
+        Command* first_cmd = CreateCommand(first_cmd_line);
+        Command* second_cmd = CreateCommand(second_cmd_line);
+        close(1);
+        int my_pipe[2];
+        pipe ( my_pipe );
+        int pid;
+        pid = fork();
+        if ( pid == 0){
+            close(my_pipe[1]);
+            dup2(my_pipe[0],0);
+            this->cur_cmd = second_cmd;
+            second_cmd->execute();
+        } else{
 
+            close(my_pipe[0]);
+            dup2(my_pipe[1],1);
+              first_cmd->execute();
+              this->fg_pid = -1;
+              this->curr_fg_job_id = 0;
+              this->jobs->removeFinishedJobs();
+        }
+    }else {
+        Command *cmd = CreateCommand(cmd_line); // example
+        this->cur_cmd = cmd;
+        cmd->execute();
+        this->fg_pid = -1;
+        this->curr_fg_job_id = 0;
+        this->jobs->removeFinishedJobs();
+    }
 }
 // Please note that you must fork smash process for some commands (e.g., external commands....)
 
